@@ -1,9 +1,10 @@
 ## Install
 
 1. Clone the solution locally, preferably under your `C:\` drive.
-2. Run `npm install` in terminal. You have to be in the root directory of the solution `C:\AutomationTests`.
-3. Get environment variables 
-4. Copy the contents of `.env.example` file and create a new file `.env` with values from LastPass
+2. Ensure you have an LTS Node version installed.
+3. Run `npm install` in terminal. You have to be in the root directory of the solution `C:\AutomationTests`.
+4. Run `npx playwright install` to download the newest web drivers
+5. Copy the contents of `.env.example` file and create a new file `.env` with values from LastPass
 
 ## Update
 
