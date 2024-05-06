@@ -6,8 +6,8 @@ export class SomeService {
     private apiContext!: APIRequestContext;
 
     endpoints = {
-        main: 'main/',
-        someEndpoint: 'someEndpoint/',
+        main: 'facts/',
+        someEndpoint: '',
     };
 
     public static async instance(token: string): Promise<SomeService> {
@@ -30,7 +30,6 @@ export class SomeService {
         return await this.apiContext.get(endpoint);
     }
 
-    //getToken
     public async getToken(): Promise<string> {
         const token = 'some token';
         console.log(`>> GET token: ${token}`);
