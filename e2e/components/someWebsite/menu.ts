@@ -3,11 +3,11 @@ import { Locator, Page } from '@playwright/test';
 export class Menu {
     page: Page;
 
-    menuButton: Locator;
+    breeds: Locator;
 
     constructor(page: Page) {
         this.page = page;
 
-        this.menuButton = page.locator("a[href='/portal/menu']");
+        this.breeds = page.locator('#operations-tag-Breeds');
     }
 }
