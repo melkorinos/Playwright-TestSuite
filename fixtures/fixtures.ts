@@ -1,8 +1,8 @@
 import { mergeTests } from '@playwright/test';
 
-import { WebComponents, test as finalWebComponents } from './webComponents';
+import { WebComponents, test as webComponents } from './webComponents';
 
-import { WebPages, test as finalWebPages } from './webPages';
+import { WebPages, test as webPages } from './webPages';
 import { test as services } from './services';
 
 /**
@@ -10,6 +10,6 @@ import { test as services } from './services';
  */
 export type BrowserFixtures = WebPages & WebComponents;
 
-export const test = mergeTests(finalWebPages, finalWebComponents, services);
+export const test = mergeTests(webPages, webComponents, services);
 
 export { expect } from '@playwright/test';
