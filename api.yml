@@ -1,0 +1,60 @@
+parameters:
+    - name: env
+      displayName: Environment
+      type: string
+      default: some_env
+      values:
+          - some_env
+          - some_other_env
+
+trigger:
+    - main
+
+pool:
+    vmImage: ubuntu-latest
+
+variables:
+    - group: some_common_secrets_library
+
+    - ${{ if eq(parameters.env, 'some_env') }}:
+          - group: test2.v8-automation_tests
+          - name: some_specific_value
+            value: 11111
+
+steps:
+    - task: NodeTool@0
+      inputs:
+          versionSpec: '18'
+      displayName: 'Install Node.js'
+
+    - script: npm ci
+      displayName: 'npm ci'
+
+    - script: npx playwright install chromium
+      displayName: 'Install Playwright chromium'
+
+    - script: npm run test:api
+      displayName: 'Run Playwright tests'
+      env:
+          CI: 'true'
+          SERVER: ${{ parameters.env }}
+          PASS: $(PASS)
+          CONFIG_ID: $(CONFIG_ID)
+
+    - task: PublishTestResults@2
+      displayName: 'Publish test results'
+      inputs:
+          searchFolder: 'reports'
+          testResultsFormat: 'JUnit'
+          testResultsFiles: 'results.xml'
+          mergeTestResults: true
+          failTaskOnFailedTests: true
+          testRunTitle: 'API tests - ${{ parameters.env }}'
+      condition: succeededOrFailed()
+
+    - task: PublishPipelineArtifact@1
+      inputs:
+          targetPath: 'playwright-report'
+          artifact: playwright-report
+          publishLocation: 'pipeline'
+      condition: succeededOrFailed()
