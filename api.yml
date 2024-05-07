@@ -17,7 +17,7 @@ variables:
     - group: some_common_secrets_library
 
     - ${{ if eq(parameters.env, 'some_env') }}:
-          - group: test2.v8-automation_tests
+          - group: some_env-automation_tests
           - name: some_specific_value
             value: 11111
 
