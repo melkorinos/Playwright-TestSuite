@@ -10,8 +10,4 @@ export class BasePage {
 
         if (mainLocator) this.mainLocator = page.locator('some locator');
     }
-
-    async findChildLocator(selector: Locator | string) {
-        return this.mainLocator.locator(selector);
-    }
 }
