@@ -5,7 +5,7 @@ test('[someID] Login and verify element', async function ({ webComponents, webPa
         await webPages.loginPage.login();
     });
 
-    await test.step('Сheck breeds are visible', async () => {
-        await expect(webComponents.menu.breeds).toBeVisible();
+    await test.step('Test ', async () => {
+        await expect(webComponents.menu.someLocator).toBeEnabled();
     });
 });
