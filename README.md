@@ -1,28 +1,47 @@
+- [Install](#install)
+- [Update](#update)
+  - [VS Code extensions](#vs-code-extensions)
+    - [Required](#required)
+    - [Reccomended](#reccomended)
+- [Run](#run)
+  - [Run preconfigured test scripts from `package.json`](#run-preconfigured-test-scripts-from-packagejson)
+  - [Run single test with CLI](#run-single-test-with-cli)
+    - [Run test(s) in VSCode](#run-tests-in-vscode)
+- [Contents](#contents)
+  - [Test Suite Flow](#test-suite-flow)
+  - [Service template](#service-template)
+  - [Test file template](#test-file-template)
+  - [Pipelines](#pipelines)
+  - [TODOs and FIXMEs](#todos-and-fixmes)
+    - [Connecting pipeline runs to azure tests](#connecting-pipeline-runs-to-azure-tests)
+- [Resources](#resources)
+  - [Playwright](#playwright)
+
 ## Install
 
 1. Clone the solution locally, preferably under your `C:\` drive.
-2. Ensure you have an LTS Node version installed.
-3. Run `npm install` in terminal. You have to be in the root directory of the solution `C:\AutomationTests`.
-4. Run `npx playwright install` to download the newest web drivers
-5. Copy the contents of `.env.example` file and create a new file `.env` with values from LastPass
+1. Ensure you have an [LTS Node.js version](https://nodejs.org/) installed, [Git](https://git-scm.com/) for version control, and [Visual Studio Code](https://code.visualstudio.com/) as your code editor.
+1. Run `npm ci` in terminal. You have to be in the root directory of the project `C:\AutomationTests`. We run `npm CI` instead of `npm i` as to not update dependecies during regular PRs.
+1. Run `npx playwright install` to download the newest web drivers
+1. Copy the contents of `.env.example` file and create a new file `.env` and input the values.
 
 ## Update
 
 1. Run `npm install @playwright/test@latest`
-2. Run `npx playwright install` to download the newest web drivers
-3. Verify by ensuring that `npx playwright --version` matches the version listed in your package.json
+1. Run `npx playwright install` to download the newest web drivers
+1. Verify by ensuring that `npx playwright --version` matches the version listed in your package.json
 
 ### VS Code extensions
 
 #### Required
 
 1. **_Playwright Test for VScode_**
-2. **_Prettier - Code formatter_** extensions. Set Prettier as a default formatter by `ctrl + shift + p` -> `Format document with` -> `Configure default formatter` and choose prettier.
+1. **_Prettier - Code formatter_** extensions. Set Prettier as a default formatter by `ctrl + shift + p` -> `Format document with` -> `Configure default formatter` and choose prettier.
 
 #### Reccomended
 
 1. [Pretty TS errors](https://marketplace.visualstudio.com/items?itemName=yoavbls.pretty-ts-errors) : enhances display of typescript errors
-2. [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight) : browser all repo's tech dept with CTRL + SHIFT + P -> `highlight`
+1. [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight) : browser all repo's tech dept with CTRL + SHIFT + P -> `highlight`
 
 ## Run
 
@@ -50,16 +69,16 @@ In case the Green test arrow is not visible in your IDE attempt to reload with `
 ### Test Suite Flow
 
 1. When a test or a collection of tests is triggered, the `.env` file is read to parse the ENV variables. For pipelines these vars are stored in [azure libraries](https://dev.azure.com/.../_library?itemType=VariableGroups).
-2. From `package.json` based on the script that was selected, the project + the amount of workers are determined. Number of workers cannot be larger than the number of sets in [config.ts](/config/config.ts).
-3. If workers are > 1 then the tests will be run in parallel. This is handled in [configHelper.ts](/config/configHelper.ts). Currently we have 2 sets, hence 2 workers max.
+1. From `package.json` based on the script that was selected, the project + the amount of workers are determined. Number of workers cannot be larger than the number of sets in [config.ts](/config/config.ts).
+1. If workers are > 1 then the tests will be run in parallel. This is handled in [configHelper.ts](/config/configHelper.ts). Currently we have 2 sets, hence 2 workers max.
     1. First the correct set of sets per server is selected using `getConfigSetByParallelIndex`.
     2. Then the rest of the resources are sellected by the various functions.
-4. From `playwright.config.ts` based on the project the following are determined:
+1. From `playwright.config.ts` based on the project the following are determined:
     1. The Directory where the test runner will look for matching test files.
     2. Various preconfigured settings such as maximum test run time / browser permissions and other playwright available options.
     3. The report format which is common for all projects.
-5. From the fixtures folder, the base `test` object is extended with API services + E2E components. 
-6. Setup and teardown :
+1. From the fixtures folder, the base `test` object is extended with API services + E2E components. The base expect object is extended with custom matchers. 
+1. Setup and teardown :
     1. Per fixture is implemented before and after the `use` function respectively. 
     2. Per service is implemented on the service file itself just after the singleton logic. 
 
@@ -144,10 +163,14 @@ test.afterAll(async ({ services }) => {
 
 ### Pipelines
 
-Currently there are 3 pipelines that are produced from this repo:
+Example API pipeline with azure devops setup is included
 
--   **API** : runs all API tests. 
--   **E2E** : runs all E2E tests. 
+### TODOs and FIXMEs
+Code can be marked with the following 2 options. You can use the [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight) to browse them.
+
+- //TODO: For all items related to tech dept and generic improvements.
+- //FIXME: For all items/tests that are skipped. Either they are validly failing with no planned resolution in the near future OR that they are still under development.
+
 
 #### Connecting pipeline runs to azure tests
 
@@ -165,4 +188,5 @@ For achieving this the [following package is used](https://www.npmjs.com/package
 -   [Locators](https://playwright.dev/docs/locators).
 -   [Fixtures](https://playwright.dev/docs/api/class-fixtures).
 -   [Assertions](https://playwright.dev/docs/test-assertions).
+-   [Customer Matchers](https://playwright.dev/docs/test-assertions#add-custom-matchers-using-expectextend)
 
