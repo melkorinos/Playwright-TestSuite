@@ -6,7 +6,7 @@ export class SomeService {
     private apiContext!: APIRequestContext;
 
     endpoints = {
-        main: 'facts/',
+        main: getUrl() + 'facts/',
         someEndpoint: '',
     };
 
@@ -14,7 +14,7 @@ export class SomeService {
         if (!this.instanceCache) {
             this.instanceCache = new this();
             this.instanceCache.apiContext = await request.newContext({
-                baseURL: getUrl() + this.instanceCache.endpoints.main,
+                baseURL: this.instanceCache.endpoints.main,
                 extraHTTPHeaders: {
                     Authorization: `Bearer ${token}`,
                 },
