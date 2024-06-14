@@ -29,10 +29,4 @@ export class SomeService {
         console.log(`>> GET something to ${this.endpoints.main}${endpoint}`);
         return await this.apiContext.get(endpoint);
     }
-
-    public async getToken(): Promise<string> {
-        const token = 'some token';
-        console.log(`>> GET token: ${token}`);
-        return token;
-    }
 }

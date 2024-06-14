@@ -3,7 +3,7 @@ import { getNewBrowser } from 'helpers/browserHelper';
 
 let userB: BrowserFixtures;
 
-test('[someID] Login and verify element', async function ({ webComponents, webPages, browser }) {
+test('[testID] Login and verify element', async function ({ webComponents, webPages, browser }) {
     await test.step('Login ', async () => {
         await webPages.loginPage.login();
     });
