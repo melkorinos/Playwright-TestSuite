@@ -8,11 +8,3 @@ export function getTimestamp(): string {
 
     return `${month}${date}-${hours}:${minutes}:${seconds}`;
 }
-
-export function randomGuid(): string {
-    return '00000000-xxxx-xxxx-xxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (placeholder) {
-        const randomDigit = (Math.random() * 16) | 0;
-        const hexDigit = placeholder === 'x' ? randomDigit : (randomDigit & 0x3) | 0x8;
-        return hexDigit.toString(16);
-    });
-}

@@ -5,4 +5,8 @@ test('[someID] Some Service - Check something', async function ({ services }) {
         const response = await services.someService.getEndpoint();
         expect(response).toBeOK();
     });
+
+    await test.step('Use customer matchers', async () => {
+        expect('string').not.toBeHello();
+    });
 });
