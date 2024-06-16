@@ -1,5 +1,5 @@
 import { test, expect, BrowserFixtures } from 'fixtures/fixtures';
-import { getNewBrowser } from 'e2e/helpers/browserHelper';
+import { getNewBrowser } from 'helpers/browserHelper';
 
 let userB: BrowserFixtures;
 
