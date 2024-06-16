@@ -1,5 +1,5 @@
 import { test as base } from '@playwright/test';
-import { Menu } from 'components/someWebsite';
+import { Menu } from 'e2e/components/someWebsite';
 
 export type WebComponents = {
     webComponents: {

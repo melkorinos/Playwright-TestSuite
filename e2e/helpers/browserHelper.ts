@@ -1,7 +1,7 @@
 import { Browser } from '@playwright/test';
 import { BrowserFixtures } from 'fixtures/fixtures';
 
-import { LoginPage, Menu } from '../components/someWebsite';
+import { LoginPage, Menu } from 'e2e/components/someWebsite';
 
 export async function getNewBrowser(browser: Browser): Promise<BrowserFixtures> {
     const context = await browser.newContext();
