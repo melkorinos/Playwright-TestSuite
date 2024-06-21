@@ -29,4 +29,12 @@ export class SomeService {
         console.log(`>> GET something to ${this.endpoints.main}${endpoint}`);
         return await this.apiContext.get(endpoint);
     }
+
+    public async postEndpoint(inputData: string): Promise<APIResponse> {
+        const endpoint = this.endpoints.someEndpoint;
+
+        const body = { data: inputData };
+        console.log(`>> POST something to ${this.endpoints.main}${endpoint}`);
+        return await this.apiContext.post(endpoint, { data: body });
+    }
 }
