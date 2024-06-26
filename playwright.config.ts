@@ -65,7 +65,7 @@ const config: PlaywrightTestConfig = {
                   } as AzureReporterOptions,
               ],
           ]
-        : [['list'], ['html']], //if this is NOT a CI run
+        : [['list'], ['html']], //if this is NOT a CI run serve the standard playwright reports
 
     reportSlowTests: null,
     timeout: 300_000,
