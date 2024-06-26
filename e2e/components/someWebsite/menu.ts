@@ -1,12 +1,11 @@
 import { Locator, Page } from '@playwright/test';
+import { BaseComponent } from 'e2e/components/baseComponent';
 
-export class Menu {
-    page: Page;
-
+export class Menu extends BaseComponent {
     someLocator: Locator;
 
     constructor(page: Page) {
-        this.page = page;
+        super(page);
 
         this.someLocator = page.locator('some locator');
     }

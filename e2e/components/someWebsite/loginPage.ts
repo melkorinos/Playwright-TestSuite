@@ -1,17 +1,17 @@
 import { Locator, Page } from '@playwright/test';
 import { BasePage } from '../basePage';
-import { getUrl } from 'config/configHelper';
 
 export class LoginPage extends BasePage {
-    somelocator: Locator;
+    username: Locator;
 
     constructor(page: Page) {
         super(page);
 
-        this.somelocator = page.locator('some locator');
+        this.username = page.locator('username');
     }
 
     async login() {
-        await this.page.goto(getUrl());
+        await this.goTo();
+        await this.username.fill('username');
     }
 }
