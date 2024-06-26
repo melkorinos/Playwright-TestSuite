@@ -21,6 +21,7 @@
 
 1. Clone the solution locally, preferably under your `C:\` drive.
 1. Ensure you have an [LTS Node.js version](https://nodejs.org/) installed, [Git](https://git-scm.com/) for version control, and [Visual Studio Code](https://code.visualstudio.com/) as your code editor.
+1. Install typescript and ts node globally with `npm install -g ts-node typescript`
 1. Run `npm ci` in terminal. You have to be in the root directory of the project `C:\AutomationTests`. We run `npm CI` instead of `npm i` as to not update dependecies during regular PRs.
 1. Run `npx playwright install` to download the newest web drivers
 1. Copy the contents of `.env.example` file and create a new file `.env` and input the values.

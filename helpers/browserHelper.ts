@@ -11,12 +11,12 @@ export async function getNewBrowser(browser: Browser): Promise<BrowserFixtures> 
         loginPage: new LoginPage(page),
     };
 
-    const components = {
+    const webComponents = {
         menu: new Menu(page),
     };
 
     return {
-        components,
+        webComponents,
         webPages,
     };
 }
