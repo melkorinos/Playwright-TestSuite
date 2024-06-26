@@ -34,22 +34,20 @@ steps:
       displayName: 'Install Playwright chromium'
 
     - script: npm run test:api
-      displayName: 'Run Playwright tests'
+      displayName: 'Run Playwright tests - ${{ parameters.env }}'
       env:
           CI: 'true'
           SERVER: ${{ parameters.env }}
-          PASS: $(PASS)
-          CONFIG_ID: $(CONFIG_ID)
 
     - task: PublishTestResults@2
-      displayName: 'Publish test results'
+      displayName: 'Publish test results - ${{ parameters.env }}'
       inputs:
           searchFolder: 'reports'
           testResultsFormat: 'JUnit'
           testResultsFiles: 'results.xml'
           mergeTestResults: true
           failTaskOnFailedTests: true
-          testRunTitle: 'API tests - ${{ parameters.env }}'
+          testRunTitle: 'API tests'
       condition: succeededOrFailed()
 
     - task: PublishPipelineArtifact@1
