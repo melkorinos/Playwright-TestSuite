@@ -1,0 +1,52 @@
+parameters:
+    - name: env
+      displayName: Environment
+      type: string
+      values:
+          - someEnv
+          - someOtherEnv
+
+stages:
+    - stage: ${{ parameters.env }}
+      variables:
+          - group: some-var-group
+
+      jobs:
+          - job: ${{ parameters.env }} # This is where the env is provided to the job from the triggering pipeline
+            pool:
+                vmImage: ubuntu-latest
+            steps:
+                - task: NodeTool@0
+                  inputs:
+                      versionSpec: '18'
+                  displayName: 'Install Node.js'
+
+                - script: npm ci
+                  displayName: 'npm ci'
+
+                - script: npx playwright install chromium
+                  displayName: 'Install Playwright chromium'
+
+                - script: npm run test:e2e
+                  displayName: 'Run E2E - ${{ parameters.env }}'
+                  env:
+                      PROJECT: 'CI'
+                      SERVER: ${{ parameters.env }}
+
+                - task: PublishTestResults@2
+                  displayName: 'Publish test results - ${{ parameters.env }}'
+                  inputs:
+                      searchFolder: 'reports'
+                      testResultsFormat: 'JUnit'
+                      testResultsFiles: 'results*.xml'
+                      mergeTestResults: true
+                      failTaskOnFailedTests: true
+                      testRunTitle: 'Verify all services are running'
+                  condition: succeededOrFailed()
+
+                - task: PublishPipelineArtifact@1
+                  inputs:
+                      targetPath: 'playwright-report'
+                      artifact: playwright-report_${{ parameters.env }}
+                      publishLocation: 'pipeline'
+                  condition: succeededOrFailed()
