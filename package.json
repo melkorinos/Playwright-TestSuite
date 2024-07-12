@@ -7,7 +7,6 @@
     },
     "license": "ISC",
     "dependencies": {
-        "@alex_neo/playwright-azure-reporter": "^1.9.1",
         "@playwright/test": "^1.44.1",
         "@types/node": "^20.14.2",
         "dotenv": "^16.4.5"

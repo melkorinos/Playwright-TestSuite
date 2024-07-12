@@ -13,7 +13,6 @@
   - [Test file template](#test-file-template)
   - [Pipelines](#pipelines)
   - [TODOs and FIXMEs](#todos-and-fixmes)
-    - [Connecting pipeline runs to azure tests](#connecting-pipeline-runs-to-azure-tests)
 - [Resources](#resources)
   - [Playwright](#playwright)
 
@@ -171,15 +170,6 @@ Code can be marked with the following 2 options. You can use the [TODO Highlight
 
 - //TODO: For all items related to tech dept and generic improvements.
 - //FIXME: For all items/tests that are skipped. Either they are validly failing with no planned resolution in the near future OR that they are still under development.
-
-
-#### Connecting pipeline runs to azure tests
-
-For achieving this the [following package is used](https://www.npmjs.com/package/@alex_neo/playwright-azure-reporter). All tests need to be matched to their azure test case ID.
-
--   The package is used as a reported on `playwright.config.ts` for CI runs.
--   The plan ID is collected from the URL of the test cases.
--   The rest of the information come either from the ENV runs of the pipelines agent or the devOps team.
 
 ## Resources
 
