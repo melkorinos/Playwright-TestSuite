@@ -30,6 +30,7 @@ stages:
                 - script: npm run test:e2e
                   displayName: 'Run E2E - ${{ parameters.env }}'
                   env:
+                      CI: 'true'
                       PROJECT: 'CI'
                       SERVER: ${{ parameters.env }}
 
