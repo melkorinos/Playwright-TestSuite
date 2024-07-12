@@ -61,6 +61,7 @@ With the [Playwright Test for VSCode extension](https://marketplace.visualstudio
 
 You can also see the browser and debug tests as they are running. See the instructions on the extension's marketplace page for more information.  
 In case the Green test arrow is not visible in your IDE attempt to reload with `ctrl + shift + p` -> `Developer: Reload Window`.
+If the issue persists navigate to the `Testing` tab on the left. On the testing tab expand the playwright container and ensure the appropriate playwright project box is ticket.
 
 ## Contents
 
