@@ -1,5 +1,6 @@
 export const config: Record<string, any> = {
     'example': {
+        //The sets are used to determine which set of properties to use in the tests in case of parallel execution 
         sets: [
             {
                 propertySet1: 'value1',
