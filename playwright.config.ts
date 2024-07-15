@@ -32,6 +32,8 @@ const config: PlaywrightTestConfig = {
             },
             testDir: 'api/tests/',
         },
+
+        { name: 'apiUtils', testDir: 'api/utils/', testMatch: '**/*.utils.ts' },
     ],
     reporter: process.env.CI
         ? [['list'], ['junit', { outputFile: 'reports/results.xml' }], ['html', { open: 'never' }]]
