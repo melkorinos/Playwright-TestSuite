@@ -10,6 +10,7 @@
 - [Contents](#contents)
   - [Test Suite Flow](#test-suite-flow)
   - [Pipelines](#pipelines)
+  - [Docker](#docker)
   - [TODOs and FIXMEs](#todos-and-fixmes)
 - [Resources](#resources)
   - [Playwright](#playwright)
@@ -84,6 +85,11 @@ If the issue persists navigate to the `Testing` tab on the left. On the testing 
 ### Pipelines
 
 Example API pipeline with azure devops setup is included
+
+### Docker
+
+To build the image without starting the container with `docker-compose build` from the root of the project. If you also want to start the container use `docker-compose up`.   
+The env vars will be collected from the .env file. To overide an env var run the container with `docker-compose run -e SERVER=custom_server playwright-tests`
 
 ### TODOs and FIXMEs
 Code can be marked with the following 2 options. You can use the [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight) to browse them.
