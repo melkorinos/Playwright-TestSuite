@@ -1,20 +1,19 @@
-# .github/workflows/scheduled-api-tests.yml
-name: Scheduled API Tests
+name: API Tests
 
-#on:
-#schedule:
-#- cron: '0,5,10 12 * * 1,2,3,5'  # At 12:00, 12:05, and 12:10 on Monday, Tuesday, Wednesday, and Friday
-push:
+on:
+  schedule:
+    - cron: '0,5,10 12 * * 1,2,3,5'  # At 12:00, 12:05, and 12:10 on Monday, Tuesday, Wednesday, and Friday
+  push:
     branches:
-        - main # Run on every push to the main branch
+      - main  # Run on every push to the main branch
 
 jobs:
-    test-someEnv:
-        uses: ./.github/workflows/api-test-template.yml
-        with:
-            env: example
+  test-someEnv:
+    uses: ./.github/workflows/api-test-template.yml
+    with:
+      env: example
 
-    #test-someOtherEnv:
-    #  uses: ./.github/workflows/api-test-template.yml
-    #  with:
-    #    env: someOtherEnv
+  test-someOtherEnv:
+    uses: ./.github/workflows/api-test-template.yml
+    with:
+      env: someOtherEnv
