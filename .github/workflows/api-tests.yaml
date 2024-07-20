@@ -28,7 +28,7 @@ jobs:
       run: npm run test:api
       env:
         CI: 'true'
-        PROJECT: 'CI'
+        SERVER: 'example'
 
     - name: Upload test results
       uses: actions/upload-artifact@v3
