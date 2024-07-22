@@ -42,7 +42,7 @@ export class SomeService {
     }
 
     public async uploadFile(fileName: string): Promise<APIResponse>{
-        const endpoint = this.endpoints.main + this.endpoints.upload;
+        const endpoint = this.endpoints.main + this.endpoints.uploadFile;
         const filePath = path.resolve(__dirname, '../../testData', fileName);
         const fileBuffer = fs.createReadStream(filePath);
 

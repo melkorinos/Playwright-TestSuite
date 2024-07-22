@@ -21,9 +21,9 @@ test('[testID] Some Service - Check something', async function ({ services }) {
             .toBe(200);
     });
 
-    await test.step('Upload fikle', async () => {
+    await test.step('Upload file', async () => {
         const filename = 'testImage.jpg';
-        const response = await.services.someService.upload(filename);
+        const response = await services.someService.uploadFile(filename);
         expect(response).toBeOK();
     });
 });
