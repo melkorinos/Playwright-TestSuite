@@ -20,4 +20,10 @@ test('[testID] Some Service - Check something', async function ({ services }) {
             })
             .toBe(200);
     });
+
+    await test.step('Upload fikle', async () => {
+        const filename = 'testImage.jpg';
+        const response = await.services.someService.upload(filename);
+        expect(response).toBeOK();
+    });
 });
