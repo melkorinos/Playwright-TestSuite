@@ -41,22 +41,19 @@ export class SomeService {
         return await this.apiContext.post(endpoint, { data: body });
     }
 
-    public async uploadFile(fileName: string): Promise<APIResponse>{
+    public async uploadFile(fileName: string): Promise<APIResponse> {
         const endpoint = this.endpoints.main + this.endpoints.uploadFile;
         const filePath = path.resolve(__dirname, '../../testData', fileName);
         const fileBuffer = fs.createReadStream(filePath);
 
         const customHeaders = {
-            'content-type': 'multipart/form-data;',
-        }
+            'content-type': 'multipart/form-data',
+        };
 
         const multipartBody = {
             file: fileBuffer
-        }
+        };
 
-        return await this.apiContext.post(endpoint, { headers: customHeaders, multipart: multipartBody}
-        });
-
-
+        return this.apiContext.post(endpoint, { headers: customHeaders, multipart: multipartBody });
     }
 }
