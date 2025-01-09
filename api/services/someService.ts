@@ -1,5 +1,7 @@
 import { APIRequestContext, APIResponse, request } from '@playwright/test';
 import { getUrl } from 'config/configHelper';
+import * as fs from 'fs';
+import path from 'path';
 
 export class SomeService {
     private static instanceCache?: SomeService;
@@ -8,6 +10,7 @@ export class SomeService {
     endpoints = {
         main: getUrl() + 'facts/',
         someEndpoint: '',
+        uploadFile: 'upload'
     };
 
     public static async instance(token: string): Promise<SomeService> {
@@ -36,5 +39,21 @@ export class SomeService {
         const body = { data: inputData };
         console.log(`>> POST something to ${this.endpoints.main}${endpoint}`);
         return await this.apiContext.post(endpoint, { data: body });
+    }
+
+    public async uploadFile(fileName: string): Promise<APIResponse> {
+        const endpoint = this.endpoints.main + this.endpoints.uploadFile;
+        const filePath = path.resolve(__dirname, '../../testData', fileName);
+        const fileBuffer = fs.createReadStream(filePath);
+
+        const customHeaders = {
+            'content-type': 'multipart/form-data',
+        };
+
+        const multipartBody = {
+            file: fileBuffer
+        };
+
+        return this.apiContext.post(endpoint, { headers: customHeaders, multipart: multipartBody });
     }
 }

@@ -14,6 +14,7 @@
   - [TODOs and FIXMEs](#todos-and-fixmes)
 - [Resources](#resources)
   - [Playwright](#playwright)
+- [TODO](#todo)
 
 ## Install
 
@@ -107,3 +108,7 @@ Code can be marked with the following 2 options. You can use the [TODO Highlight
 -   [Assertions](https://playwright.dev/docs/test-assertions).
 -   [Customer Matchers](https://playwright.dev/docs/test-assertions#add-custom-matchers-using-expectextend)
 
+## TODO
+
+- Test skipping with tabs
+- Upload file
