@@ -1,18 +1,16 @@
 import { Locator, Page } from '@playwright/test';
-import { getUrl } from 'config/configHelper';
 
 export class BasePage {
     page: Page;
-
-    mainLocator!: Locator;
+    selectors: { [key: string]: Locator };
 
     constructor(page: Page, mainLocator?: Locator) {
         this.page = page;
 
-        if (mainLocator) this.mainLocator = page.locator('some locator');
+        this.selectors = {};
     }
 
-    async goTo() {
-        await this.page.goto(getUrl());
+    async goTo(url : string) {
+        await this.page.goto(url);
     }
 }
