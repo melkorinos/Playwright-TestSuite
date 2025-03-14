@@ -1,9 +1,19 @@
 import { expect, test } from 'fixtures/fixtures';
+import { IResponseModel } from 'api/models/someService';
 
 test('[testID] Some Service - Check something', async function ({ services }) {
-    await test.step('Check something', async () => {
+    let responseData: IResponseModel;
+
+    await test.step('Check response', async () => {
         const response = await services.someService.getEndpoint();
+        responseData = await response.json();
         await expect(response).toBeOK();
+    });
+
+    await test.step('Check there is a cat fact', async () => {
+        for (const fact of responseData.data) {
+            expect(fact.fact.toLocaleLowerCase()).toContain('cat');
+        }
     });
 
     await test.step('Use customer matchers', async () => {
