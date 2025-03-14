@@ -4,7 +4,7 @@ export class BasePage {
     page: Page;
     selectors: { [key: string]: Locator };
 
-    constructor(page: Page, mainLocator?: Locator) {
+    constructor(page: Page) {
         this.page = page;
 
         this.selectors = {};
