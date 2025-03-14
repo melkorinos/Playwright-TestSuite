@@ -6,6 +6,7 @@
 - [Run](#run)
   - [Run preconfigured test scripts from `package.json`](#run-preconfigured-test-scripts-from-packagejson)
   - [Run single test with CLI](#run-single-test-with-cli)
+  - [Run test with playwright UI](#run-test-with-playwright-ui)
     - [Run test(s) in VSCode](#run-tests-in-vscode)
 - [Contents](#contents)
   - [Test Suite Flow](#test-suite-flow)
@@ -54,7 +55,13 @@ npm run test:api
 ### Run single test with CLI
 
 ```sh
-npm run test:e2e -- -g "[test title (or part of it)]"
+npx playwright test -g testName.test.ts
+```
+
+### Run test with playwright UI
+
+```sh
+npx playwright test -g testName.test.ts --ui
 ```
 
 #### Run test(s) in VSCode
