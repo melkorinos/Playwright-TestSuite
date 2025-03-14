@@ -1,13 +1,16 @@
-export const config: Record<
-    string,
-    {
-        properties: { [key: string]: string }[];
-        url: string;
-    }
-> = {
-    prod: {
-        // The properties are used to determine which set of parameters to use in the tests in case of parallel execution
-        properties: [
+interface PropertySet {
+    [key: string]: string;
+}
+
+interface EnvironmentConfig {
+    sets: PropertySet[];
+    url: string;
+}
+
+export const config: Record<string, EnvironmentConfig> = {
+    example: {
+        // The sets are used to determine which set of properties to use in the tests in case of parallel execution
+        sets: [
             {
                 propertySet1: 'value1',
             },
@@ -18,8 +21,8 @@ export const config: Record<
         url: 'https://catfact.ninja/',
     },
 
-    test: {
-        properties: [
+    some_other_env: {
+        sets: [
             {
                 propertySet1: 'value1',
             },
