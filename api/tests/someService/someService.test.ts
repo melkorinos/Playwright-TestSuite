@@ -7,7 +7,7 @@ test('[testID] Some Service - Check something', async function ({ services }) {
     await test.step('Check response', async () => {
         const response = await services.someService.getEndpoint();
         responseData = await response.json();
-        await expect(response).toBeOK();
+        expect(response.status(), { message: await response.text() }).toBeOK();
     });
 
     await test.step('Check there is a cat fact', async () => {
