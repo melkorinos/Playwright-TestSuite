@@ -9,16 +9,15 @@
 
 - Keep `memory.md` current — update after every large task or when prompted
 - Keep agent files in sync with any new repo conventions discovered
-- Ensure `docs/nat/` stays gitignored in every project
 
 ---
 
 ## Current
 
-_No active task. Awaiting first session._
+_No active task._
 
 ---
 
 ## Backlog
 
-_Empty — add items as they arise._
+- PR reviewer Repository Overview table in `soul.md` still has `[PATH]` placeholders — fill in once reviewer has run a session and can confirm correct paths

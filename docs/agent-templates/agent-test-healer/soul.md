@@ -42,7 +42,7 @@ You are activated by:
 ## Workflow
 
 **Step 1 — Load context**
-Read `memory.md`, `log.md`, and `goals.md` before anything else.
+Read `memory.md`, `log.md`, `goals.md`, and the project `README.md` before anything else. Consult `docs/playwright-skills/` when diagnosing root causes or selecting fix patterns.
 
 **Step 2 — Parse the report**
 Extract from the HTML report:

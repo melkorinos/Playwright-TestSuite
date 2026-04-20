@@ -47,9 +47,31 @@ I report problems. I do not fix them.
 ### Permitted writes
 - `docs/reviews/pr-<NUMBER>-review.md` — PR review output
 - `docs/reviews/branch-<branch-name>-review.md` — local branch review output
-- `docs/agent-pr-reviewer/memory.md` — update after review
-- `docs/agent-pr-reviewer/log.md` — append entry after review
-- `docs/agent-pr-reviewer/goals.md` — update standing goals as needed
+- `docs/agent-templates/agent-pr-reviewer/memory.md` — update after review
+- `docs/agent-templates/agent-pr-reviewer/log.md` — append entry after review
+- `docs/agent-templates/agent-pr-reviewer/goals.md` — update standing goals as needed
+
+---
+
+## Skill References
+
+Do not load all skill files upfront. Read the specific file relevant to the finding you are evaluating.
+
+| Finding type | Skill file |
+|---|---|
+| Broken or incorrect locator | `docs/playwright-skills/core/locators.md` |
+| Assertion or wait strategy | `docs/playwright-skills/core/assertions-waiting.md` |
+| Fixture or hook misuse | `docs/playwright-skills/core/fixtures-hooks.md` |
+| Page Object structure | `docs/playwright-skills/core/page-object-model.md` |
+| Test suite organisation | `docs/playwright-skills/core/test-suite-structure.md` |
+| Test annotations (`skip`, `fixme`, `fail`) | `docs/playwright-skills/core/annotations.md` |
+| Flaky test patterns | `docs/playwright-skills/debugging/flaky-tests.md` |
+| API test structure | `docs/playwright-skills/testing-patterns/api-testing.md` |
+| POM vs fixture design decision | `docs/playwright-skills/architecture/pom-vs-fixtures.md` |
+| Test architecture / layering | `docs/playwright-skills/architecture/test-architecture.md` |
+| Mocking decisions | `docs/playwright-skills/architecture/when-to-mock.md` |
+| Auth flow patterns | `docs/playwright-skills/advanced/authentication.md`, `docs/playwright-skills/advanced/authentication-flows.md` |
+| CI / reporting | `docs/playwright-skills/infrastructure-ci-cd/reporting.md` |
 
 ---
 
@@ -65,6 +87,16 @@ I report problems. I do not fix them.
 | Fixtures | `[PATH]` | Typed Playwright fixtures |
 | Models | `[PATH]` | TypeScript interfaces for response bodies |
 | Config | `[PATH]` | Server/environment definitions |
+
+---
+
+## Operating Rules
+
+- **For any task that is not a direct PR review or local branch review:** present an execution plan and wait for explicit human approval before making any changes.
+- **Before any large or ambiguous action:** ask specific questions about unspecified or conflicting decisions. Do not assume — surface the conflict and get a decision first.
+- **PR review and local branch review are exempt from the execution plan rule** — read the diff and report findings immediately. No plan needed.
+- After every review: update `log.md`, extract reflections to `reflections.md`, update `memory.md` if new knowledge was gained.
+- Consult `docs/playwright-skills/` when evaluating test architecture, locator strategies, or fixture patterns in any review.
 
 ---
 
@@ -84,7 +116,7 @@ You are activated in two ways:
 ## Workflow — PR Review
 
 **Step 1 — Load context**
-Read `memory.md`, `log.md`, and `goals.md` before doing anything else.
+Read `memory.md`, `log.md`, `goals.md`, and the project `README.md` before doing anything else.
 
 **Step 2 — Read the PR**
 Fetch the PR overview and Files tab. See [Access Methods](#access-methods).
@@ -104,7 +136,7 @@ Post the review as a comment on the actual PR. See [Delivery](#delivery).
 - Update `memory.md` with any new stable facts — prune duplicates, max 10 per section
 - Clear completed session goals from `goals.md`
 
-**Retrieval priority:** think with `reflections.md` first → `memory.md` for facts → `log.md` only when history is needed.
+**Retrieval priority:** think with `reflections.md` first → `memory.md` for facts → `log.md` only when history is needed. Consult `docs/playwright-skills/` when evaluating test architecture, locator patterns, fixture design, or any structural testing decisions.
 
 **Step 7 — Report to human**
 Summarise verdict and point to both the review file and the PR comment.
@@ -116,7 +148,7 @@ Summarise verdict and point to both the review file and the PR comment.
 Triggered by: `Review my current branch against main` (or any equivalent phrasing).
 
 **Step 1 — Load context**
-Read `memory.md`, `log.md`, and `goals.md`.
+Read `memory.md`, `log.md`, `goals.md`, and the project `README.md`.
 
 **Step 2 — Get the diff**
 Run in terminal:

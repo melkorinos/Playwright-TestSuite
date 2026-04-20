@@ -1,121 +1,298 @@
+﻿# Playwright Test Suite — Boilerplate
+
+A generic, ready-to-adapt Playwright test suite. Clone it, point it at your app, and you have a working API + E2E automation framework from day one.
+
+---
+
+## Table of Contents
+
+- [What's included](#whats-included)
+- [Prerequisites](#prerequisites)
 - [Install](#install)
 - [Update](#update)
-  - [VS Code extensions](#vs-code-extensions)
-    - [Required](#required)
-    - [Reccomended](#reccomended)
+- [Environment variables](#environment-variables)
 - [Run](#run)
-  - [Run preconfigured test scripts from `package.json`](#run-preconfigured-test-scripts-from-packagejson)
-  - [Run single test with CLI](#run-single-test-with-cli)
-  - [Run test with playwright UI](#run-test-with-playwright-ui)
-    - [Run test(s) in VSCode](#run-tests-in-vscode)
-- [Contents](#contents)
-  - [Test Suite Flow](#test-suite-flow)
-  - [Pipelines](#pipelines)
-  - [Docker](#docker)
-  - [TODOs and FIXMEs](#todos-and-fixmes)
+- [VS Code extensions](#vs-code-extensions)
+- [Repo structure](#repo-structure)
+- [How it works](#how-it-works)
+- [Pipelines](#pipelines)
+- [Docker](#docker)
+- [AI agents](#ai-agents)
 - [Resources](#resources)
-  - [Playwright](#playwright)
-- [TODO](#todo)
+- [Tech debt](#tech-debt)
+
+---
+
+## What's included
+
+| Area | Description |
+|---|---|
+| API tests | Headless HTTP-level tests using Playwright's request context |
+| E2E tests | Browser-driven tests using Playwright + Page Object Model |
+| Typed fixtures | Merges services, pages, and components into the base `test` object |
+| Service layer | Static async factory pattern — auth-aware API wrappers |
+| Config system | Multi-environment, parallel-worker-aware config |
+| Custom matchers | Extendable `expect` with project-specific assertions |
+| CI pipeline | Example GitHub Actions / Azure DevOps pipeline templates |
+| Docker support | Run tests in a container with a single command |
+| AI agents | PR reviewer, test healer, and personal assistant — activated via VS Code slash commands |
+| Skills library | Playwright best-practice reference docs in `docs/playwright-skills/` |
+
+---
+
+## Prerequisites
+
+- [Node.js LTS](https://nodejs.org/)
+- [Git](https://git-scm.com/)
+- [Visual Studio Code](https://code.visualstudio.com/)
+
+---
 
 ## Install
 
-1. Clone the solution locally, preferably under your `C:\` drive.
-1. Ensure you have an [LTS Node.js version](https://nodejs.org/) installed, [Git](https://git-scm.com/) for version control, and [Visual Studio Code](https://code.visualstudio.com/) as your code editor.
-1. Install typescript and ts node globally with `npm install -g ts-node typescript`
-1. Run `npm ci` in terminal. You have to be in the root directory of the project `C:\AutomationTests`. We run `npm CI` instead of `npm i` as to not update dependecies during regular PRs.
-1. Run `npx playwright install` to download the newest web drivers
-1. Copy the contents of `.env.example` file and create a new file `.env` and input the values.
+1. Clone the repo and open the root folder in VS Code.
+2. Install TypeScript and ts-node globally:
+   ```sh
+   npm install -g ts-node typescript
+   ```
+3. Install dependencies (use `ci` to avoid unintended updates during regular work):
+   ```sh
+   npm ci
+   ```
+4. Download Playwright browser drivers:
+   ```sh
+   npx playwright install
+   ```
+5. Copy `.env.example` to `.env` and fill in the values:
+   ```sh
+   cp .env.example .env
+   ```
+
+---
 
 ## Update
 
-1. Run `npm install @playwright/test@latest`
-1. Run `npx playwright install` to download the newest web drivers
-1. Verify by ensuring that `npx playwright --version` matches the version listed in your package.json
+1. Update Playwright to latest:
+   ```sh
+   npm install @playwright/test@latest
+   npx playwright install
+   ```
+2. Verify the installed version matches `package.json`:
+   ```sh
+   npx playwright --version
+   ```
 
-### VS Code extensions
+---
 
-#### Required
+## Environment variables
 
-1. **_Playwright Test for VScode_**
-1. **_Prettier - Code formatter_** extensions. Set Prettier as a default formatter by `ctrl + shift + p` -> `Format document with` -> `Configure default formatter` and choose prettier.
+| Variable | Description |
+|---|---|
+| `SERVER` | Selects the active environment from `config/config.ts` (e.g. `example`) |
+| `PASS` | Password used for authentication in token/service setup |
 
-#### Reccomended
+Copy `.env.example` to `.env` and set both values before running tests.
 
-1. [Pretty TS errors](https://marketplace.visualstudio.com/items?itemName=yoavbls.pretty-ts-errors) : enhances display of typescript errors
-1. [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight) : browser all repo's tech dept with CTRL + SHIFT + P -> `highlight`
+---
 
 ## Run
 
-### Run preconfigured test scripts from `package.json`
-
+### Run all API tests
 ```sh
 npm run test:api
 ```
 
-### Run single test with CLI
-
+### Run all E2E tests
 ```sh
-npx playwright test -g testName.test.ts
+npm run test:e2e
 ```
 
-### Run test with playwright UI
-
+### Run a single test by name
 ```sh
-npx playwright test -g testName.test.ts --ui
+npx playwright test -g "test title here"
 ```
 
-#### Run test(s) in VSCode
+### Run with Playwright UI (interactive mode)
+```sh
+npx playwright test --ui
+```
 
-With the [Playwright Test for VSCode extension](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright) you can easily run one or many tests.
+### Run in VS Code
 
-You can also see the browser and debug tests as they are running. See the instructions on the extension's marketplace page for more information.  
-In case the Green test arrow is not visible in your IDE attempt to reload with `ctrl + shift + p` -> `Developer: Reload Window`.
-If the issue persists navigate to the `Testing` tab on the left. On the testing tab expand the playwright container and ensure the appropriate playwright project box is ticket.
+Install the [Playwright Test for VS Code](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright) extension. Use the **Testing** panel to run, debug, and watch tests. If the green run arrow is missing, reload the window: `Ctrl+Shift+P` → `Developer: Reload Window`. If it persists, open the **Testing** tab, expand the Playwright container and verify the correct project is checked.
 
-## Contents
+---
 
-### Test Suite Flow
+## VS Code extensions
 
-1. When a test or a collection of tests is triggered, the `.env` file is read to parse the ENV variables. For pipelines these vars are stored in [azure libraries](https://dev.azure.com/.../_library?itemType=VariableGroups).
-1. From `package.json` based on the script that was selected, the project + the amount of workers are determined. Number of workers cannot be larger than the number of sets in [config.ts](/config/config.ts).
-1. If workers are > 1 then the tests will be run in parallel. This is handled in [configHelper.ts](/config/configHelper.ts). Currently we have 2 sets, hence 2 workers max.
-    1. First the correct set of sets per server is selected using `getConfigSetByParallelIndex`.
-    2. Then the rest of the resources are sellected by the various functions.
-1. From `playwright.config.ts` based on the project the following are determined:
-    1. The Directory where the test runner will look for matching test files.
-    2. Various preconfigured settings such as maximum test run time / browser permissions and other playwright available options.
-    3. The report format which is common for all projects.
-1. From the fixtures folder, the base `test` object is extended with API services + E2E components. The base expect object is extended with custom matchers. 
-1. Setup and teardown :
-    1. Per fixture is implemented before and after the `use` function respectively. 
-    2. Per service is implemented on the service file itself just after the singleton logic. 
+### Required
+- **Playwright Test for VS Code** — test runner integration
+- **Prettier** — formatter. Set as default: `Ctrl+Shift+P` → `Format Document With` → `Configure Default Formatter` → Prettier.
 
-### Pipelines
+### Recommended
+- [Pretty TS Errors](https://marketplace.visualstudio.com/items?itemName=yoavbls.pretty-ts-errors) — readable TypeScript error display
+- [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight) — browse all `TODO` and `FIXME` markers: `Ctrl+Shift+P` → `highlight`
 
-Example API pipeline with azure devops setup is included
+---
 
-### Docker
+## Repo structure
 
-To build the image without starting the container with `docker-compose build` from the root of the project. If you also want to start the container use `docker-compose up`.   
-The env vars will be collected from the .env file. To overide an env var run the container with `docker-compose run -e SERVER=custom_server playwright-tests`
+```
+.github/
+  prompts/            <- VS Code slash-command AI agents
+  workflows/          <- CI pipeline templates
+api/
+  constants/          <- Shared API constants
+  models/             <- TypeScript interfaces for response bodies
+  services/           <- API service clients (static async factory pattern)
+  tests/              <- API test files
+  utils/              <- Utility runners (matched by apiUtils Playwright project)
+config/
+  config.ts           <- Named environments: url + parallel worker sets
+  configHelper.ts     <- Reads SERVER env var, resolves active config + parallel set
+docs/
+  README.md           <- This file
+  agent-templates/    <- AI agent files (soul, memory, reflections, log, goals)
+  playwright-skills/  <- Playwright best-practice reference library
+e2e/
+  components/         <- Page Object Model: pages and reusable components
+  tests/              <- E2E browser test files
+fixtures/
+  fixtures.ts         <- Merges all fixtures; extends expect with custom matchers
+  services.ts         <- API service fixture (setup + teardown)
+  webComponents.ts    <- UI component fixture
+  webPages.ts         <- Page object fixture
+helpers/
+  browserHelper.ts    <- Utilities for spawning additional browser contexts
+  customFunctions.ts  <- Shared helper functions
+  customMatchers.ts   <- Custom matcher implementations
+testData/             <- Static test data files
+```
 
-### TODOs and FIXMEs
-Code can be marked with the following 2 options. You can use the [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight) to browse them.
+---
 
-- //TODO: For all items related to tech dept and generic improvements.
-- //FIXME: For all items/tests that are skipped. Either they are validly failing with no planned resolution in the near future OR that they are still under development.
+## How it works
+
+### Config and parallel execution
+
+The active environment is selected by the `SERVER` env variable. Each environment in `config/config.ts` defines a `url` and a `sets` array. Each set is a property bag consumed by one parallel worker. Max workers = number of sets (currently 2).
+
+`TEST_PARALLEL_INDEX` (injected by Playwright) selects the correct set per worker via `getConfigSetByParallelIndex()` in `configHelper.ts`.
+
+### Fixtures
+
+`fixtures/fixtures.ts` merges three fixture files into the base `test` object:
+- `services.ts` — instantiates API service clients (token fetch → service factory → `use` → teardown)
+- `webPages.ts` — instantiates page objects bound to the current `page`
+- `webComponents.ts` — instantiates reusable UI component objects
+
+Custom matchers are added to `expect` via `baseExpect.extend(...)`.
+
+### Services
+
+All API services follow the **static async factory** pattern:
+```ts
+public static async instance(token?: string): Promise<MyService>
+```
+No constructors with side effects. Tests never call HTTP directly — always through service methods.
+
+### Test structure rules
+
+- Every test title must start with a `[TestCaseId]` prefix.
+- Tests with 3+ actions must use `test.step`.
+- No nested `test.step`.
+- Every HTTP call must assert the response status.
+- Cleanup goes in `afterAll`, wrapped in `try/catch/finally`.
+
+### Playwright projects
+
+| Project | Test directory | Match pattern |
+|---|---|---|
+| `api` | `api/tests/` | `**/*.test.ts` |
+| `e2e` | `e2e/tests/` | `**/*.test.ts` |
+| `apiUtils` | `api/utils/` | `**/*.utils.ts` |
+
+### Reports
+
+| Environment | Format |
+|---|---|
+| Local | HTML (auto-opens) |
+| CI | List + JUnit XML (`reports/results.xml`) + HTML (never auto-opens) |
+
+CI retries: 2. Local retries: 0.
+
+---
+
+## Pipelines
+
+Example pipeline templates are in `.github/workflows/`. They cover API test runs and can be adapted for GitHub Actions or Azure DevOps. Environment variables are passed via pipeline secrets or variable groups — never hardcoded.
+
+---
+
+## Docker
+
+Build the image without starting the container:
+```sh
+docker-compose build
+```
+
+Build and start:
+```sh
+docker-compose up
+```
+
+Override an environment variable at runtime:
+```sh
+docker-compose run -e SERVER=custom_server playwright-tests
+```
+
+Environment variables are read from `.env`.
+
+---
+
+## AI agents
+
+Three agents are available as VS Code slash commands. In Copilot Chat (agent mode), type the command to activate.
+
+| Command | Agent | Purpose |
+|---|---|---|
+| `/nat` | Personal assistant | Knows this repo deeply. Plans, edits, reviews architecture. |
+| `/pr-review` | PR Reviewer | Reads a PR diff or local branch diff and produces a structured code review. |
+| `/test-healer` | Test Healer | Reads a Playwright HTML failure report, diagnoses root causes, and fixes failing tests. |
+
+Agent files (soul, memory, reflections, log, goals) live in `docs/agent-templates/`. All agents consult `docs/playwright-skills/` for testing best practices.
+
+**Setup:** ensure `.vscode/settings.json` contains `"chat.promptFiles": true`.
+
+---
 
 ## Resources
 
-### Playwright
+### Playwright official docs
+- [Best practices](https://playwright.dev/docs/best-practices)
+- [Locators](https://playwright.dev/docs/locators)
+- [Fixtures](https://playwright.dev/docs/api/class-fixtures)
+- [Assertions](https://playwright.dev/docs/test-assertions)
+- [Custom matchers](https://playwright.dev/docs/test-assertions#add-custom-matchers-using-expectextend)
 
--   [Best practices](https://playwright.dev/docs/best-practices).
--   [Locators](https://playwright.dev/docs/locators).
--   [Fixtures](https://playwright.dev/docs/api/class-fixtures).
--   [Assertions](https://playwright.dev/docs/test-assertions).
--   [Customer Matchers](https://playwright.dev/docs/test-assertions#add-custom-matchers-using-expectextend)
+### This repo's skill library (`docs/playwright-skills/`)
+- `core/` — locators, assertions & waiting, fixtures & hooks, POM, test data, suite structure, annotations
+- `debugging/` — flaky tests, debugging, error testing, console errors
+- `architecture/` — POM vs fixtures, test architecture, when to mock
+- `advanced/` — authentication, authentication flows
+- `infrastructure-ci-cd/` — CI/CD, reporting
+- `testing-patterns/` — API testing
 
-## TODO
+---
 
-- Test skipping with tabs
-- Upload file
+## Tech debt
+
+Code is marked with two conventions. Browse them with the [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight) extension (`Ctrl+Shift+P` → `highlight`).
+
+- `// TODO:` — general improvements and tech debt
+- `// FIXME:` — skipped or in-progress tests, with explanation
+
+Current known items:
+- Replace `console.log` in `api/services/someService.ts` with a proper logger
+- Test skipping with tabs — not yet implemented
+- File upload test — not yet implemented

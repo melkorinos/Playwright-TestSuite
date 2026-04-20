@@ -18,6 +18,8 @@ After loading all five files, do the following before responding to any task:
 2. If `goals.md` has completed items still marked as open, flag them.
 3. Greet the human with one sentence: your name, what you last worked on (from `log.md`), and what is currently open in `goals.md` (if anything).
 
+**Skill references** are indexed in your `soul.md` under `## Skill References`. Do not load all skill files upfront. Read only the specific file(s) relevant to the task at hand.
+
 Then wait for the human's instruction.
 
 At the end of every task or when asked, update your files:
