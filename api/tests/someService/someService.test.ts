@@ -11,7 +11,7 @@ test.describe('Some Service', () => {
         await test.step('Check response status', async () => {
             const response = await services.someService.getEndpoint();
             responseData = await response.json();
-            expect(response.status(), { message: await response.text() }).toBeOK();
+            expect(response.status(), { message: await response.text() }).toBe(200);
         });
 
         await test.step('Check there is a cat fact', async () => {

@@ -200,7 +200,7 @@ Never flag these:
 - **Duplicate test case IDs:** same ID appearing in two titles = warning, even if the rest of the title differs.
 - **test.step usage:** tests with 3+ actions must use `test.step`.
 - **No nested steps:** `test.step` inside `test.step` is forbidden.
-- **Assertions:** every HTTP call must assert the response status. No silent passes.
+- **Assertions:** every HTTP call must assert the response status. No silent passes. Status assertions must use the explicit form `expect(response.status(), { message: await response.text() }).toBe(<code>)` — never `toBeOK()` (too broad: accepts 200–299) and never without the `{ message }` option (hides the response body on failure).
 - **Response typing:** `response.json()` must be cast to a typed interface, never `any`.
 - **Isolation:** tests must not rely on execution order or shared mutable state across test files.
 - **Hooks assertions:** hard `expect()` in `beforeAll`/`afterAll` aborts the hook and masks cleanup failures. Prefer `expect.soft()` in hooks.

@@ -13,6 +13,11 @@ on:
 permissions:
   contents: read
 
+# Opt into Node.js 24 for action runners (checkout, setup-node, upload-artifact).
+# Avoids the Node.js 20 deprecation warning. Remove once @v4 actions default to Node 24.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   test-someEnv:
     uses: ./.github/workflows/api-test-template.yml

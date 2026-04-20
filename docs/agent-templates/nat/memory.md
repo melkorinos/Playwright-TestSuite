@@ -48,3 +48,4 @@
 
 - `console.log` still present in `someService.ts` — flagged but not yet removed (boilerplate code).
 - The `instanceCache` on services is static — tests sharing a service instance must not mutate shared state.
+- **API status assertion convention:** always `expect(response.status(), { message: await response.text() }).toBe(<code>)` — explicit status code, response body surfaced on failure. Never `toBeOK()`.
