@@ -21,4 +21,3 @@ _No active task._
 ## Backlog
 
 - PR reviewer Repository Overview table in `soul.md` still has `[PATH]` placeholders — fill in once reviewer has run a session and can confirm correct paths
-- Personal memory intake in progress — `personal-memory.md` created and wired in; awaiting first batch of files (emails, PDFs, WhatsApp)
