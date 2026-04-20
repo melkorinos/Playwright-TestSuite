@@ -1,4 +1,5 @@
 import { APIRequestContext, request } from '@playwright/test';
+
 import { getUrl } from 'config/configHelper';
 
 export class TokenService {
@@ -29,5 +30,10 @@ export class TokenService {
         console.log(`>> GET token from ${this.endpoints.main}${endpoint}`);
         const response = await this.apiContext.post(endpoint, { form: body });
         return await response.json();
+    }
+
+    public async dispose(): Promise<void> {
+        await this.apiContext.dispose();
+        TokenService.instanceCache = undefined;
     }
 }

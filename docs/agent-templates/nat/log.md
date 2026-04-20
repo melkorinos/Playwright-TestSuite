@@ -5,6 +5,15 @@
 
 ---
 
+## 2026-04-20 — Package updates
+
+**Done:**
+- Updated all packages to latest stable via `npm install @latest`
+- Ran `npm audit fix` — resolved all 7 vulnerabilities, 0 remaining
+- `package.json` updated: `@playwright/test` 1.54.2→1.59.1, `@types/node` 24.1.0→25.6.0, `dotenv` 17.2.1→17.4.2, `@typescript-eslint/eslint-plugin` 8.26.1→8.58.2, `eslint-plugin-playwright` 2.2.0→2.10.2
+
+---
+
 ## 2026-04-20 — First session in Playwright-TestSuite
 
 **Done:**

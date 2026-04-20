@@ -1,5 +1,6 @@
 import { devices, type PlaywrightTestConfig } from '@playwright/test';
 import dotenv from 'dotenv';
+import { getUrl } from 'config/configHelper';
 
 dotenv.config();
 
@@ -8,6 +9,7 @@ const config: PlaywrightTestConfig = {
         {
             name: 'e2e', // for e2e tests in test environments
             use: {
+                baseURL: getUrl(),
                 channel: 'chrome',
                 ...devices['Desktop Chrome'],
                 actionTimeout: 45_000,

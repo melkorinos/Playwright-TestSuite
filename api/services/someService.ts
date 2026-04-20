@@ -1,6 +1,8 @@
-import { APIRequestContext, APIResponse, request } from '@playwright/test';
-import { getUrl } from 'config/configHelper';
 import * as fs from 'fs';
+
+import { APIRequestContext, APIResponse, request } from '@playwright/test';
+
+import { getUrl } from 'config/configHelper';
 import path from 'path';
 
 export class SomeService {
@@ -55,5 +57,10 @@ export class SomeService {
         };
 
         return this.apiContext.post(endpoint, { headers: customHeaders, multipart: multipartBody });
+    }
+
+    public async dispose(): Promise<void> {
+        await this.apiContext.dispose();
+        SomeService.instanceCache = undefined;
     }
 }
