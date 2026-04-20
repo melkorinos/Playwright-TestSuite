@@ -309,7 +309,13 @@ Three agents are available as VS Code slash commands. In Copilot Chat (agent mod
 
 Agent files (soul, memory, reflections, log, goals) live in `docs/agent-templates/`. All agents consult `docs/playwright-skills/` for testing best practices.
 
-**Setup:** ensure `.vscode/settings.json` contains `"chat.promptFiles": true`.
+**Setup:** ensure `.vscode/settings.json` contains `"chat.promptFiles": true`. This file is at the root of the repo — create it if it doesn't exist:
+```json
+{
+  "chat.promptFiles": true
+}
+```
+Then in VS Code, open Copilot Chat in **Agent mode** and type `/nat`, `/pr-review`, or `/test-healer` to activate.
 
 ### Nat — private context repo
 
