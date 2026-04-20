@@ -7,4 +7,4 @@ playwright.local.config.ts
 .env
 playwright-report/
 temp/
-personal-memory.md
+docs/agent-templates/nat/personal-memory.md

@@ -5,6 +5,26 @@
 
 ---
 
+## 2026-04-20 — Personal memory setup + private repo decision
+
+**Done:**
+- Created `personal-memory.md` — personal life context file with sections: About Me, People, Work & Professional, Finance, Health, Commitments & Ongoing Situations, Writing Style
+- Populated from 4 source files: Argenta mortgage email thread, Niasstraat splitsing email thread, WhatsApp with Wife-N, Sifnos tips PDF
+- Extracted writing style (formal + informal), people aliases, full mortgage breakdown (4 parts, figures, decisions), Amsterdam apartment situation, Greece move plan
+- Decided: private GitHub repo (Option A) for all nat agent files; gitignore `docs/agent-templates/nat/` from public repo
+- Removed 'Never commit Nat files' rule from soul.md
+- Updated `.gitignore` to ignore full `docs/agent-templates/nat/` folder
+
+**Decisions:**
+- Rental mortgage ruled out (market rent €2,500–3,000 < required €3,800)
+- Mother-in-house option ruled out
+- Leading option: friends live in apartment informally, Dimitris stays BRP-registered, no Argenta notification
+- Interest rate fix for parts 01+03: 1-year lock submitted Apr 20, 2026
+- Permanent residency certificate: worth applying before leaving NL
+- Next action on mortgage: commission taxatierapport to lower risk class at next renewal (July 2027)
+
+---
+
 ## 2026-04-20 — README: Pipelines and Docker sections
 
 **Done:**

@@ -311,6 +311,29 @@ Agent files (soul, memory, reflections, log, goals) live in `docs/agent-template
 
 **Setup:** ensure `.vscode/settings.json` contains `"chat.promptFiles": true`.
 
+### Nat — private context repo
+
+Nat has a companion private repository ([myAgents](https://github.com/melkorinos/myAgents)) that stores `personal-memory.md` — personal life context that is gitignored from this public repo.
+
+The file lives at `docs/agent-templates/nat/personal-memory.md` locally. It is loaded automatically when `/nat` is activated.
+
+**On a new machine:**
+```sh
+# After cloning this repo, initialise the private repo inside the nat folder
+cd docs/agent-templates/nat
+git init
+git remote add origin https://github.com/melkorinos/myAgents.git
+git pull origin main
+```
+
+**Saving personal context changes:**
+```sh
+cd docs/agent-templates/nat
+git add .
+git commit -m "update personal context"
+git push
+```
+
 ---
 
 ## Resources
