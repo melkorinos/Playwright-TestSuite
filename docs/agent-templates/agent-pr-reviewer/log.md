@@ -5,4 +5,5 @@
 
 ---
 
-_No entries yet._
+## 2026-04-20 | repo-review | ✅ Fixed | Applied all pipeline and Docker fixes from best-practices review.
+

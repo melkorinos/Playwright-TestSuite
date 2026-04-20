@@ -225,28 +225,75 @@ CI retries: 2. Local retries: 0.
 
 ## Pipelines
 
-Example pipeline templates are in `.github/workflows/`. They cover API test runs and can be adapted for GitHub Actions or Azure DevOps. Environment variables are passed via pipeline secrets or variable groups — never hardcoded.
+Pipeline files live in `.github/workflows/`. The design uses a **reusable template** (`api-test-template.yml`) called by a **trigger workflow** (`api-tests.yaml`).
+
+### Trigger workflow — `api-tests.yaml`
+
+Runs on:
+- Every push to `main`
+- Manual trigger from the GitHub Actions UI (**Actions** tab → select workflow → **Run workflow**)
+
+Calls the template once per environment. A second environment job is commented out — uncomment and set the `env:` value to add it.
+
+### Template — `api-test-template.yml`
+
+Each job in the template runs on `ubuntu-latest` and does the following:
+
+| Step | What happens |
+|---|---|
+| Checkout | `actions/checkout@v4` |
+| Node.js | Version read from `.nvmrc` via `actions/setup-node@v4` |
+| Install deps | `npm ci` |
+| Install browsers | `npx playwright install --with-deps chromium` — also installs required OS libraries |
+| Run tests | `npm run test:api` with `CI=true`, `SERVER` from workflow input, `PASS` from repo secret |
+| Upload artifacts | HTML report (`playwright-report/`) + JUnit XML (`reports/`) — retained for 14 days |
+
+### Secrets required
+
+| Secret | Where to set |
+|---|---|
+| `PASS` | GitHub repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret** |
+
+### Adding an environment
+
+In `api-tests.yaml`, uncomment the `test-someOtherEnv` job block and update the `env:` value to match a key in `config/config.ts`.
 
 ---
 
 ## Docker
 
-Build the image without starting the container:
-```sh
-docker-compose build
-```
+Use Docker when you want a self-contained, reproducible run without touching your local Node or browser setup. The image is built from the official Playwright base (`mcr.microsoft.com/playwright:v1.59.1-noble`) which includes Ubuntu Noble, the correct Node version, and all browser system dependencies — no extra install steps needed.
 
-Build and start:
+### Build and run
+
 ```sh
+# Build the image only
+docker-compose build
+
+# Build (if needed) and run the default command (test:api)
 docker-compose up
 ```
 
-Override an environment variable at runtime:
+### Override the command or environment at runtime
+
 ```sh
+# Run E2E tests instead
+docker-compose run playwright-tests npm run test:e2e
+
+# Override the target environment
 docker-compose run -e SERVER=custom_server playwright-tests
+
+# Override both
+docker-compose run -e SERVER=custom_server playwright-tests npm run test:e2e
 ```
 
-Environment variables are read from `.env`.
+### Environment variables
+
+`docker-compose.yaml` reads from `.env` automatically. Copy `.env.example` to `.env` and set `SERVER` and `PASS` before running. `PASS` can also be passed at runtime with `-e PASS=...` — never hardcode a real value in `Dockerfile` or `docker-compose.yaml`.
+
+### Why the `node_modules` volume exists
+
+`docker-compose.yaml` mounts the repo root into the container so local source changes are picked up without a full rebuild. The anonymous volume on `/app/node_modules` prevents the host mount from overwriting the container-built `node_modules`, which contains Linux binaries incompatible with a Windows host.
 
 ---
 

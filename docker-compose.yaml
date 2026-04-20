@@ -1,8 +1,22 @@
-version: '3'
+# docker-compose.yaml — local container runner for the Playwright test suite.
+# Usage:
+#   docker-compose build          — build the image
+#   docker-compose up             — build (if needed) and run with default CMD (test:api)
+#   docker-compose run -e SERVER=example playwright-tests npm run test:e2e
+#                                 — override env var and/or command at runtime
+#
+# Environment variables are read from .env (copy .env.example to .env and fill in values).
+
 services:
   playwright-tests:
     build: .
+    # Mount the repo root into the container so local source changes are reflected without rebuild.
+    # The anonymous volume on node_modules prevents the host mount from overwriting the
+    # container-built node_modules (which contain Linux binaries incompatible with Windows hosts).
     volumes:
       - ./:/app
+      - /app/node_modules
     env_file:
       - .env
+    # Default command — matches the Dockerfile CMD. Override here or at runtime.
+    command: npm run test:api

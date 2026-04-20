@@ -5,6 +5,14 @@
 
 ---
 
+## 2026-04-20 — README: Pipelines and Docker sections
+
+**Done:**
+- Rewrote `## Pipelines` section — documents trigger workflow vs reusable template split, triggers (push to main + workflow_dispatch), steps table, secrets required, how to add an environment
+- Rewrote `## Docker` section — documents image provenance, build/run commands, runtime override patterns, `.env` usage, node_modules volume explanation
+
+---
+
 ## 2026-04-20 — Package updates
 
 **Done:**

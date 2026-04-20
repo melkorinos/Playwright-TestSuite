@@ -1,11 +1,17 @@
 name: API Tests
 
 on:
+  # Allow manual trigger from the GitHub Actions UI
+  workflow_dispatch:
   #schedule:
     #- cron: '0,5,10 12 * * 1,2,3,5'  # At 12:00, 12:05, and 12:10 on Monday, Tuesday, Wednesday, and Friday
   push:
     branches:
       - main  # Run on every push to the main branch
+
+# Minimal permissions — read-only access is sufficient for running tests
+permissions:
+  contents: read
 
 jobs:
   test-someEnv:

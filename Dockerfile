@@ -1,39 +1,38 @@
-FROM ubuntu:focal
- 
-# Avoid prompts from apt
+# Official Playwright image — includes Ubuntu Noble (24.04 LTS), the correct Node.js version,
+# and all browser system dependencies pre-installed. No manual browser or Node setup needed.
+# Pin to the same version as @playwright/test in package.json to guarantee compatibility.
+FROM mcr.microsoft.com/playwright:v1.59.1-noble
+
+# Avoid interactive prompts during any apt operations
 ENV DEBIAN_FRONTEND=noninteractive
- 
-# Install Node.js 16 and other necessary dependencies
-# https://github.com/microsoft/playwright/issues/10168#issuecomment-965941358
-RUN apt-get update && apt-get install -y curl && \
-    curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
-    apt-get install -y nodejs && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
- 
-# Set the working directory
+
+# Set the working directory inside the container
 WORKDIR /app
- 
-# Copy package.json and package-lock.json
+
+# Copy dependency manifests first — Docker caches this layer separately.
+# As long as package.json and package-lock.json don't change, npm ci is not re-run on rebuild.
 COPY package*.json ./
- 
-# Install production dependencies
-RUN npm ci --only=production
- 
-# Copy the rest of the application
+
+# Install all dependencies (including devDependencies — needed for the test runner and ESLint)
+RUN npm ci
+
+# Copy the rest of the source files
 COPY . .
- 
-# Install Chromium and its dependencies
-RUN npx playwright install --with-deps chrome
- 
-# Set environment variables
-ENV SERVER=dev2.v8
-ENV PROJECT=DEBUG
- 
-# Clean up to reduce image size
-RUN npm cache clean --force && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
- 
-# Run the API test
-CMD ["npm", "run", "test:verifyTestSuite"]
+
+# Browsers are already installed in the base image — no need to run playwright install.
+# If you ever switch to a non-Playwright base image, uncomment the line below:
+# RUN npx playwright install --with-deps chromium
+
+# SERVER selects the active environment from config/config.ts.
+# Override at runtime: docker-compose run -e SERVER=your_env playwright-tests
+# PASS is the authentication password — always override via .env or runtime flag, never hardcode a real value here.
+ENV SERVER=example
+ENV PASS=
+
+# Clean npm cache to reduce final image size
+RUN npm cache clean --force
+
+# Default command — runs the API test suite.
+# Override in docker-compose or at runtime to run a different suite:
+#   docker-compose run playwright-tests npm run test:e2e
+CMD ["npm", "run", "test:api"]
