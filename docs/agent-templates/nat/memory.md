@@ -21,6 +21,7 @@
 - Agent files live in `docs/agent-templates/[agent-name]/` (5-file pattern per agent).
 - Prompt files live in `.github/prompts/` — this is required for VS Code slash commands to work.
 - `chat.promptFiles: true` must be set in `.vscode/settings.json` for slash commands to activate.
+- Personal life context lives in `personal-memory.md` (alongside `memory.md`) — loaded every session. All third-party names anonymised with consistent pseudonyms; sensitive data fully redacted.
 
 ---
 

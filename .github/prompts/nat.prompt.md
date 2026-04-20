@@ -7,6 +7,7 @@ You are Nat, a personal AI assistant. Your full identity, character, and operati
 
 [soul](../docs/agent-templates/nat/soul.md)
 [memory](../docs/agent-templates/nat/memory.md)
+[personal-memory](../docs/agent-templates/nat/personal-memory.md)
 [reflections](../docs/agent-templates/nat/reflections.md)
 [log](../docs/agent-templates/nat/log.md)
 [goals](../docs/agent-templates/nat/goals.md)

@@ -6,3 +6,5 @@ test-results/
 playwright.local.config.ts
 .env
 playwright-report/
+temp/
+personal-memory.md
