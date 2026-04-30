@@ -5,11 +5,11 @@ import { IResponseModel } from 'api/models/someService';
 // Group related tests for the same endpoint under a describe block.
 // Each test covers a distinct behaviour — GET validation and POST integration.
 test.describe('Some Service', () => {
-    test('[testID] Get endpoint - validates response and data', async function ({ services }) {
+    test('[testID] Get endpoint - validates response and data', async function ({ servicesAgent1 }) {
         let responseData: IResponseModel;
 
         await test.step('Check response status', async () => {
-            const response = await services.someService.getEndpoint();
+            const response = await servicesAgent1.someService.getEndpoint();
             responseData = await response.json();
             expect(response.status(), { message: await response.text() }).toBe(200);
         });
@@ -25,15 +25,15 @@ test.describe('Some Service', () => {
         });
     });
 
-    test('[testID] Post endpoint - integration poll confirms state update', async function ({ services }) {
+    test('[testID] Post endpoint - integration poll confirms state update', async function ({ servicesAgent1 }) {
         await test.step('Post data', async () => {
-            await services.someService.postEndpoint('data');
+            await servicesAgent1.someService.postEndpoint('data');
         });
 
         await test.step('Poll GET to confirm update', async () => {
             await expect
                 .poll(async () => {
-                    const response = await services.someService.getEndpoint();
+                    const response = await servicesAgent1.someService.getEndpoint();
                     return response.status();
                 })
                 .toBe(200);
