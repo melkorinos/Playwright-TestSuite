@@ -31,15 +31,17 @@
 - **Base branch:** `main`
 - **Two test types:** API tests (`api/tests/`) via Playwright request context; E2E tests (`e2e/tests/`) via browser.
 - **Three Playwright projects:** `api`, `e2e`, `apiUtils` (utility runners matching `**/*.utils.ts`).
-- **Fixtures:** `fixtures/` merges services + webPages + webComponents into the base `test` object. Custom matchers extend `expect`.
-- **Services:** static async factory pattern — `public static async instance(token?)`. Never raw HTTP calls in tests.
+- **Fixtures:** `fixtures/fixtures.ts` merges `webAgents` + `services` into the base `test` object. Playwright lazily initialises — API tests never spawn a browser. Custom matchers extend `expect`.
+- **Service fixtures:** worker-scoped `servicesAgent1` / `servicesAgent2` in `fixtures/services.ts`. Each agent: `TokenService.create(baseUrl)` → `getToken(password)` → `SomeService.create(baseUrl, token)`. No singletons. Credentials from `AGENT1_PASSWORD` / `AGENT2_PASSWORD` env vars.
+- **Browser fixtures:** `browserAgent1` (wraps built-in `page`, inherits all project config) and `browserAgent2` (independent browser process via `playwright` fixture) in `fixtures/webAgents.ts`. Each agent delivers `{ webPages, webComponents }` sub-groups.
+- **Services:** `create(baseUrl, token?)` factory pattern — no singletons, no ambient config reads inside service classes. `baseUrl` always injected.
 - **Config:** `config/config.ts` holds named environments, each with `sets[]` (for parallel workers) and `url`. `SERVER` env var selects the environment.
 - **Parallel workers:** max workers = number of sets in the active config. `TEST_PARALLEL_INDEX` picks the correct set per worker.
 - **Models:** TypeScript interfaces in `api/models/` — every response body must be typed, no `any`.
-- **Components/Pages:** E2E page objects in `e2e/components/`. Locators belong there, never inline in tests.
+- **Components/Pages:** E2E page objects in `e2e/components/`. Locators belong there, never inline in tests. Organised into `webPages` (full pages with navigation) and `webComponents` (significant sub-components).
 - **Playwright skills library:** `docs/playwright-skills/` — consult for architecture decisions, locator patterns, fixture design, test data, debugging.
 - **AI agents:** three agents in `docs/agent-templates/` — `nat` (personal), `agent-pr-reviewer` (code review), `agent-test-healer` (fix failing tests). Activated via `.github/prompts/`.
-- **Env vars:** `SERVER` (selects config environment), `PASS` (auth password). Defined in `.env`, templated in `.env.example`.
+- **Env vars:** `SERVER` (selects config environment), `AGENT1_PASSWORD`, `AGENT2_PASSWORD` (auth credentials per agent). Defined in `.env`.
 - **Scripts:** `npm run test:api` and `npm run test:e2e` — both run with 2 workers.
 - **Reports:** local → HTML; CI → list + JUnit XML + HTML (never opened). Retries: 2 on CI, 0 locally.
 

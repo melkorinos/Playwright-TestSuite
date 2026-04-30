@@ -5,6 +5,29 @@
 
 ---
 
+## 2026-04-30 — Test suite architecture refactoring (candidates 1 & 2)
+
+**Done:**
+- Refactored `TokenService` and `SomeService`: removed static singleton `instanceCache`; replaced `instance()` with `create(baseUrl, token?)` factory pattern; `baseUrl` now injected, no ambient config reads inside services
+- Replaced `services` fixture with worker-scoped `servicesAgent1` / `servicesAgent2` fixtures in `fixtures/services.ts`; each agent owns its full lifecycle; credentials from `AGENT1_PASSWORD` / `AGENT2_PASSWORD` env vars
+- Introduced `AgentServices` type (`tokenService` + `someService`) — `tokenService` always included per agent for auth-behaviour testing
+- Created `fixtures/webAgents.ts` with `BrowserAgent` type and `BrowserAgentFixtures`; `browserAgent1` wraps built-in `page` (inherits all project config); `browserAgent2` launches an independent browser process via `playwright` fixture
+- Deleted `fixtures/webPages.ts` and `fixtures/webComponents.ts` — subsumed into `webAgents.ts`; `assembleBrowserAgent()` is the single assembly point
+- Deleted `helpers/browserHelper.ts` — `getNewBrowser` replaced entirely by fixture system
+- Removed module-level `let userB` from E2E test — was leaking state between tests
+- Renamed `WebAgentFixtures` → `BrowserAgentFixtures` (name conflicted with a company product)
+- Updated `fixtures/fixtures.ts`: now merges `webAgents` + `services`; Playwright lazily initialises fixtures so API tests never spawn a browser
+- Updated `api/tests/someService/someService.test.ts` and `api/utils/someUtil.utils.ts` to use `servicesAgent1`
+- README update deferred — user will request separately
+
+**Decisions:**
+- Worker scope for service fixtures: tokens last 2 hours, tests are always independent — worker scope safe and more efficient
+- `tokenService` always included in every agent (not a separate fixture) — auth-behaviour tests need it, complexity is low
+- `browserAgent2` gets its own browser process (not just a new context) for true isolation
+- No env var guard for missing `AGENT_PASSWORD` — let Playwright surface a 401 naturally
+
+---
+
 ## 2026-04-20 — Personal memory setup + private repo decision
 
 **Done:**

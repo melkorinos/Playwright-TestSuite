@@ -21,3 +21,4 @@ _No active task._
 ## Backlog
 
 - PR reviewer Repository Overview table in `soul.md` still has `[PATH]` placeholders — fill in once reviewer has run a session and can confirm correct paths
+- Update `docs/README.md` to reflect refactored fixture architecture (new service pattern, `browserAgent1`/`browserAgent2`, deleted files) — deferred, user will request when ready

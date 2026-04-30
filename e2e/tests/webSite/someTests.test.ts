@@ -1,19 +1,29 @@
-import { test, expect, BrowserFixtures } from 'fixtures/fixtures';
-import { getNewBrowser } from 'helpers/browserHelper';
+import { expect, test } from 'fixtures/fixtures';
 
-let userB: BrowserFixtures;
-
-test('[testID] Login and verify element', async function ({ webComponents, webPages, browser }) {
+test('[testID] Login and verify element', async function ({ browserAgent1 }) {
     await test.step('Login', async () => {
-        await webPages.loginPage.login();
+        await browserAgent1.webPages.loginPage.login();
     });
 
     await test.step('Test', async () => {
-        await expect(webComponents.menu.selectors.someSelector).toBeEnabled();
+        await expect(browserAgent1.webComponents.menu.selectors.someSelector).toBeEnabled();
+    });
+});
+
+test('[testID] Two-browser cross-agent interaction', async function ({ browserAgent1, browserAgent2 }) {
+    await test.step('Agent 1 logs in', async () => {
+        await browserAgent1.webPages.loginPage.login();
     });
 
-    await test.step('Login another user', async () => {
-        userB = await getNewBrowser(browser);
-        await userB.webPages.loginPage.login();
+    await test.step('Agent 2 logs in independently', async () => {
+        await browserAgent2.webPages.loginPage.login();
+    });
+
+    await test.step('Agent 1 performs action', async () => {
+        // e.g. await browserAgent1.webComponents.menu.selectors.someSelector.click();
+    });
+
+    await test.step('Agent 2 observes result', async () => {
+        // e.g. await expect(browserAgent2.webComponents.menu.selectors.someSelector).toBeVisible();
     });
 });
