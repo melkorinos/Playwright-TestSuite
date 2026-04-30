@@ -1,39 +1,26 @@
 import { APIRequestContext, request } from '@playwright/test';
 
-import { getUrl } from 'config/configHelper';
-
 export class TokenService {
-    private static instanceCache?: TokenService;
-    private apiContext!: APIRequestContext;
+    private static readonly tokenEndpoint = 'token/';
 
-    endpoints = {
-        main: getUrl(),
-        token: 'token/',
-    };
+    private constructor(
+        private readonly apiContext: APIRequestContext,
+        private readonly baseUrl: string,
+    ) {}
 
-    public static async instance(): Promise<TokenService> {
-        if (!this.instanceCache) {
-            this.instanceCache = new this();
-            this.instanceCache.apiContext = await request.newContext({
-                baseURL: this.instanceCache.endpoints.main,
-            });
-        }
-
-        return this.instanceCache;
+    public static async create(baseUrl: string): Promise<TokenService> {
+        const apiContext = await request.newContext({ baseURL: baseUrl });
+        return new TokenService(apiContext, baseUrl);
     }
 
     public async getToken(password: string): Promise<string> {
-        const endpoint = this.endpoints.token;
-
         const body = { secret: password };
-
-        console.log(`>> GET token from ${this.endpoints.main}${endpoint}`);
-        const response = await this.apiContext.post(endpoint, { form: body });
+        console.log(`>> GET token from ${this.baseUrl}${TokenService.tokenEndpoint}`);
+        const response = await this.apiContext.post(TokenService.tokenEndpoint, { form: body });
         return await response.json();
     }
 
     public async dispose(): Promise<void> {
         await this.apiContext.dispose();
-        TokenService.instanceCache = undefined;
     }
 }

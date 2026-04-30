@@ -2,65 +2,52 @@ import * as fs from 'fs';
 
 import { APIRequestContext, APIResponse, request } from '@playwright/test';
 
-import { getUrl } from 'config/configHelper';
 import path from 'path';
 
 export class SomeService {
-    private static instanceCache?: SomeService;
-    private apiContext!: APIRequestContext;
-
-    endpoints = {
-        main: getUrl() + 'facts/',
+    private static readonly endpoints = {
+        facts: 'facts/',
         someEndpoint: '',
-        uploadFile: 'upload'
+        uploadFile: 'upload',
     };
 
-    public static async instance(token: string): Promise<SomeService> {
-        if (!this.instanceCache) {
-            this.instanceCache = new this();
-            this.instanceCache.apiContext = await request.newContext({
-                baseURL: this.instanceCache.endpoints.main,
-                extraHTTPHeaders: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-        }
+    private constructor(private readonly apiContext: APIRequestContext) {}
 
-        return this.instanceCache;
+    public static async create(baseUrl: string, token: string): Promise<SomeService> {
+        const apiContext = await request.newContext({
+            baseURL: baseUrl + SomeService.endpoints.facts,
+            extraHTTPHeaders: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return new SomeService(apiContext);
     }
 
     public async getEndpoint(): Promise<APIResponse> {
-        const endpoint = this.endpoints.someEndpoint;
-        console.log(`>> GET something to ${this.endpoints.main}${endpoint}`);
+        const endpoint = SomeService.endpoints.someEndpoint;
+        console.log(`>> GET something to ${endpoint}`);
         return await this.apiContext.get(endpoint);
     }
 
     public async postEndpoint(inputData: string): Promise<APIResponse> {
-        const endpoint = this.endpoints.someEndpoint;
-
+        const endpoint = SomeService.endpoints.someEndpoint;
         const body = { data: inputData };
-        console.log(`>> POST something to ${this.endpoints.main}${endpoint}`);
+        console.log(`>> POST something to ${endpoint}`);
         return await this.apiContext.post(endpoint, { data: body });
     }
 
     public async uploadFile(fileName: string): Promise<APIResponse> {
-        const endpoint = this.endpoints.main + this.endpoints.uploadFile;
+        const endpoint = SomeService.endpoints.facts + SomeService.endpoints.uploadFile;
         const filePath = path.resolve(__dirname, '../../testData', fileName);
         const fileBuffer = fs.createReadStream(filePath);
 
-        const customHeaders = {
-            'content-type': 'multipart/form-data',
-        };
-
-        const multipartBody = {
-            file: fileBuffer
-        };
-
-        return this.apiContext.post(endpoint, { headers: customHeaders, multipart: multipartBody });
+        return this.apiContext.post(endpoint, {
+            headers: { 'content-type': 'multipart/form-data' },
+            multipart: { file: fileBuffer },
+        });
     }
 
     public async dispose(): Promise<void> {
         await this.apiContext.dispose();
-        SomeService.instanceCache = undefined;
     }
 }

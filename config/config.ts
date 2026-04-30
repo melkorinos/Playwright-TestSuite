@@ -1,35 +1,33 @@
-interface PropertySet {
-    [key: string]: string;
+/**
+ * WorkerSlot holds the non-credential resources exclusively owned by one parallel worker.
+ * Add fields here as a project requires (e.g. tenant IDs, sub-domains, test account names).
+ * One slot per worker — index matches TEST_PARALLEL_INDEX.
+ */
+export interface WorkerSlot {
+    someKey: string;
 }
 
 interface EnvironmentConfig {
-    sets: PropertySet[];
     url: string;
+    // Add further environment-level properties here as projects require
+    // (e.g. adminUrl, apiGatewayUrl, featureFlags).
+    workerSlots: WorkerSlot[];
 }
 
 export const config: Record<string, EnvironmentConfig> = {
     example: {
-        // The sets are used to determine which set of properties to use in the tests in case of parallel execution
-        sets: [
-            {
-                propertySet1: 'value1',
-            },
-            {
-                propertySet2: 'value1',
-            },
-        ],
         url: 'https://catfact.ninja/',
+        workerSlots: [
+            { someKey: 'value1' },
+            { someKey: 'value2' },
+        ],
     },
 
     some_other_env: {
-        sets: [
-            {
-                propertySet1: 'value1',
-            },
-            {
-                propertySet2: 'value1',
-            },
-        ],
         url: 'https://some_other_url/',
+        workerSlots: [
+            { someKey: 'value1' },
+            { someKey: 'value2' },
+        ],
     },
 };

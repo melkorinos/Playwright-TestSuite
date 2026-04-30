@@ -1,21 +1,29 @@
-import { mergeTests } from '@playwright/test';
-
-import { WebComponents, test as webComponents } from './webComponents';
-import { WebPages, test as webPages } from './webPages';
-import { test as services } from './services';
-
-import { expect as baseExpect } from '@playwright/test';
 import * as customMatchers from '../helpers/customMatchers';
 
-/**
- * This type is used for additional users in new browsers
- */
-export type BrowserFixtures = WebPages & WebComponents;
+import { BrowserAgent, BrowserAgentFixtures, test as browserAgents } from './browserAgents';
+import { ServiceFixtures, test as services } from './services';
+
+import { expect as baseExpect } from '@playwright/test';
+import { mergeTests } from '@playwright/test';
 
 /**
- * Combine all test components in the test object
+ * BrowserFixtures represents a fully assembled browser session for one agent.
+ * Use this type when passing a browser agent between helpers or utilities.
  */
-const test = mergeTests(webPages, webComponents, services);
+export type BrowserFixtures = BrowserAgent;
+
+/**
+ * Re-exported for tests that need to reference agent types directly
+ */
+export type { AgentServices } from './services';
+export type { ServiceFixtures, BrowserAgentFixtures, BrowserAgent };
+
+/**
+ * Combine all fixture groups into the single test object.
+ * Playwright initialises each fixture lazily — API-only tests that never
+ * reference browserAgent1/browserAgent2 will not spawn a browser process.
+ */
+const test = mergeTests(browserAgents, services);
 
 
 /**
