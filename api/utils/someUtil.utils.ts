@@ -1,3 +1,5 @@
+/* eslint-disable playwright/expect-expect */
+
 import { test as utils } from 'fixtures/fixtures';
 
 utils('Setup or check something', async function ({ servicesAgent1 }) {

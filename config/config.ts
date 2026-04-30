@@ -1,4 +1,4 @@
-1./**
+/**
  * WorkerSlot holds the non-credential resources exclusively owned by one parallel worker.
  * Add fields here as a project requires (e.g. tenant IDs, sub-domains, test account names).
  * One slot per worker — index matches TEST_PARALLEL_INDEX.

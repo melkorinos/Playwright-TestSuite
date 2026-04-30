@@ -14,6 +14,7 @@ test.describe('Some Service', () => {
         expect(typeof slot.someKey).toBe('string');
         console.log(`Worker slot resolved: ${JSON.stringify(slot)}`);
     });
+    
     test('[testID] Get endpoint - validates response and data', async function ({ servicesAgent1 }) {
         let responseData: IResponseModel;
 

@@ -33,7 +33,7 @@ async function disposeAgentServices(agent: AgentServices): Promise<void> {
     await agent.tokenService.dispose();
 }
 
-export const test = base.extend<{}, ServiceFixtures>({
+export const test = base.extend<Record<string, never>, ServiceFixtures>({
     servicesAgent1: [
         async ({}, use) => {
             const agent = await buildAgentServices(process.env.AGENT1_PASSWORD ?? '');
