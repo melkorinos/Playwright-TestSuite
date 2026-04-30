@@ -1,29 +1,30 @@
 import { expect, test } from 'fixtures/fixtures';
 
-test('[testID] Login and verify element', async function ({ browserAgent1 }) {
-    await test.step('Login', async () => {
-        await browserAgent1.webPages.loginPage.login();
+import { getUrl } from 'config/configHelper';
+
+test.describe('Browser agents', () => {
+    test('[testID] Single agent - navigates to base URL', async function ({ browserAgent1 }) {
+        await test.step('Navigate to base URL', async () => {
+            await browserAgent1.webPages.loginPage.goTo(getUrl());
+        });
+
+        await test.step('Confirm correct URL loaded', async () => {
+            await expect(browserAgent1.webPages.loginPage.page).toHaveURL(getUrl());
+        });
     });
 
-    await test.step('Test', async () => {
-        await expect(browserAgent1.webComponents.menu.selectors.someSelector).toBeEnabled();
-    });
-});
+    test('[testID] Dual agent - both browsers navigate independently to base URL', async function ({ browserAgent1, browserAgent2 }) {
+        await test.step('Agent 1 navigates to base URL', async () => {
+            await browserAgent1.webPages.loginPage.goTo(getUrl());
+        });
 
-test('[testID] Two-browser cross-agent interaction', async function ({ browserAgent1, browserAgent2 }) {
-    await test.step('Agent 1 logs in', async () => {
-        await browserAgent1.webPages.loginPage.login();
-    });
+        await test.step('Agent 2 navigates to base URL independently', async () => {
+            await browserAgent2.webPages.loginPage.goTo(getUrl());
+        });
 
-    await test.step('Agent 2 logs in independently', async () => {
-        await browserAgent2.webPages.loginPage.login();
-    });
-
-    await test.step('Agent 1 performs action', async () => {
-        // e.g. await browserAgent1.webComponents.menu.selectors.someSelector.click();
-    });
-
-    await test.step('Agent 2 observes result', async () => {
-        // e.g. await expect(browserAgent2.webComponents.menu.selectors.someSelector).toBeVisible();
+        await test.step('Both agents are on the correct URL', async () => {
+            await expect(browserAgent1.webPages.loginPage.page).toHaveURL(getUrl());
+            await expect(browserAgent2.webPages.loginPage.page).toHaveURL(getUrl());
+        });
     });
 });

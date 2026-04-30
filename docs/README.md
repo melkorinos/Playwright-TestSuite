@@ -89,9 +89,10 @@ A generic, ready-to-adapt Playwright test suite. Clone it, point it at your app,
 | Variable | Description |
 |---|---|
 | `SERVER` | Selects the active environment from `config/config.ts` (e.g. `example`) |
-| `PASS` | Password used for authentication in token/service setup |
+| `AGENT1_PASSWORD` | Password for the first authenticated agent (used by `servicesAgent1`) |
+| `AGENT2_PASSWORD` | Password for the second authenticated agent (used by `servicesAgent2`) |
 
-Copy `.env.example` to `.env` and set both values before running tests.
+Copy `.env.example` to `.env` and set all values before running tests.
 
 ---
 
@@ -144,12 +145,12 @@ Install the [Playwright Test for VS Code](https://marketplace.visualstudio.com/i
 api/
   constants/          <- Shared API constants
   models/             <- TypeScript interfaces for response bodies
-  services/           <- API service clients (static async factory pattern)
+  services/           <- API service clients (async create() factory pattern)
   tests/              <- API test files
   utils/              <- Utility runners (matched by apiUtils Playwright project)
 config/
-  config.ts           <- Named environments: url + parallel worker sets
-  configHelper.ts     <- Reads SERVER env var, resolves active config + parallel set
+  config.ts           <- Named environments: url + workerSlots (one slot per parallel worker)
+  configHelper.ts     <- Reads SERVER env var; exposes getUrl(), getConfigByServer(), getWorkerSlot()
 docs/
   README.md           <- This file
   agent-templates/    <- AI agent files (soul, memory, reflections, log, goals)
@@ -159,11 +160,9 @@ e2e/
   tests/              <- E2E browser test files
 fixtures/
   fixtures.ts         <- Merges all fixtures; extends expect with custom matchers
-  services.ts         <- API service fixture (setup + teardown)
-  webComponents.ts    <- UI component fixture
-  webPages.ts         <- Page object fixture
+  services.ts         <- Worker-scoped API service fixtures (servicesAgent1, servicesAgent2)
+  browserAgents.ts    <- Browser agent fixtures (browserAgent1, browserAgent2)
 helpers/
-  browserHelper.ts    <- Utilities for spawning additional browser contexts
   customFunctions.ts  <- Shared helper functions
   customMatchers.ts   <- Custom matcher implementations
 testData/             <- Static test data files
@@ -175,26 +174,48 @@ testData/             <- Static test data files
 
 ### Config and parallel execution
 
-The active environment is selected by the `SERVER` env variable. Each environment in `config/config.ts` defines a `url` and a `sets` array. Each set is a property bag consumed by one parallel worker. Max workers = number of sets (currently 2).
+The active environment is selected by the `SERVER` env variable. Each environment in `config/config.ts` defines a `url` and a `workerSlots` array. Each slot is a typed object (`WorkerSlot`) holding the non-credential resources exclusively owned by one parallel worker — for example, a dedicated test tenant, booking slot, or sub-domain. This ensures parallel workers never collide on shared state.
 
-`TEST_PARALLEL_INDEX` (injected by Playwright) selects the correct set per worker via `getConfigSetByParallelIndex()` in `configHelper.ts`.
+`getWorkerSlot()` in `configHelper.ts` reads `TEST_PARALLEL_INDEX` (injected by Playwright) at call time and returns the correct slot for the current worker. Max workers should equal the number of slots defined for the active environment (currently 2).
+
+For further environment-level properties (e.g. `adminUrl`, `apiGatewayUrl`), add fields to `EnvironmentConfig` in `config.ts` and expose them via `configHelper.ts`.
 
 ### Fixtures
 
-`fixtures/fixtures.ts` merges three fixture files into the base `test` object:
-- `services.ts` — instantiates API service clients (token fetch → service factory → `use` → teardown)
-- `webPages.ts` — instantiates page objects bound to the current `page`
-- `webComponents.ts` — instantiates reusable UI component objects
+`fixtures/fixtures.ts` merges two fixture files into the base `test` object:
+- `browserAgents.ts` — browser agent fixtures (`browserAgent1`, `browserAgent2`)
+- `services.ts` — API service agent fixtures (`servicesAgent1`, `servicesAgent2`)
+
+Playwright initialises fixtures lazily — API-only tests that never reference `browserAgent1` or `browserAgent2` will not spawn a browser process.
 
 Custom matchers are added to `expect` via `baseExpect.extend(...)`.
 
+### Browser agents
+
+Each browser agent delivers `{ webPages, webComponents }` — the same page objects, organised into pages (own navigation) and components (significant sub-components within pages).
+
+- **`browserAgent1`** — wraps the built-in `page` fixture. Inherits all project-level config (baseURL, timeouts, channel, viewport) from `playwright.config.ts` automatically.
+- **`browserAgent2`** — launches a fully independent browser process via the `playwright` fixture. No shared browser state with `browserAgent1`. Use this when a test needs two simultaneous browsers (e.g. agent A performs an action, agent B observes the result in their own session).
+
+To add a new page object: create it in `e2e/components/`, then add it to `assembleBrowserAgent()` in `fixtures/browserAgents.ts`.
+
+### Service agents
+
+Each service agent (`servicesAgent1`, `servicesAgent2`) is **worker-scoped** — one instance per parallel worker, shared across that worker's tests, disposed after the worker finishes.
+
+Each agent contains:
+- `tokenService` — always included; use this in auth-behaviour tests (e.g. wrong password, disallowed domain)
+- `someService` — authenticated with the agent's token; each agent has an independent API context
+
+Credentials come from `AGENT1_PASSWORD` / `AGENT2_PASSWORD` env vars. The fixture calls `TokenService.create(baseUrl)` → `getToken(password)` → `SomeService.create(baseUrl, token)`. No singletons — each agent owns its full lifecycle.
+
 ### Services
 
-All API services follow the **static async factory** pattern:
+All API services follow the **async create() factory** pattern:
 ```ts
-public static async instance(token?: string): Promise<MyService>
+public static async create(baseUrl: string, token?: string): Promise<MyService>
 ```
-No constructors with side effects. Tests never call HTTP directly — always through service methods.
+`baseUrl` is always injected — services read nothing from ambient config or env vars. Tests never call HTTP directly — always through service methods.
 
 ### Test structure rules
 
@@ -233,7 +254,7 @@ Runs on:
 - Every push to `main`
 - Manual trigger from the GitHub Actions UI (**Actions** tab → select workflow → **Run workflow**)
 
-Calls the template once per environment. A second environment job is commented out — uncomment and set the `env:` value to add it.
+Calls the template once per environment with `secrets: inherit` so agent credentials flow through. A second environment job is commented out — uncomment and set the `env:` value to add it.
 
 ### Template — `api-test-template.yml`
 
@@ -245,18 +266,20 @@ Each job in the template runs on `ubuntu-latest` and does the following:
 | Node.js | Version read from `.nvmrc` via `actions/setup-node@v4` |
 | Install deps | `npm ci` |
 | Install browsers | `npx playwright install --with-deps chromium` — also installs required OS libraries |
-| Run tests | `npm run test:api` with `CI=true`, `SERVER` from workflow input, `PASS` from repo secret |
+| Run API tests | `npm run test:api` with `CI=true`, `SERVER` from workflow input, agent credentials from secrets |
+| Run E2E tests | `npm run test:e2e` with the same env vars |
 | Upload artifacts | HTML report (`playwright-report/`) + JUnit XML (`reports/`) — retained for 14 days |
 
 ### Secrets required
 
 | Secret | Where to set |
 |---|---|
-| `PASS` | GitHub repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret** |
+| `AGENT1_PASSWORD` | GitHub repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret** |
+| `AGENT2_PASSWORD` | Same location |
 
 ### Adding an environment
 
-In `api-tests.yaml`, uncomment the `test-someOtherEnv` job block and update the `env:` value to match a key in `config/config.ts`.
+In `api-tests.yaml`, uncomment the `test-someOtherEnv` job block and update the `env:` value to match a key in `config/config.ts`. Ensure the new environment has the correct number of `workerSlots` entries.
 
 ---
 
@@ -285,11 +308,14 @@ docker-compose run -e SERVER=custom_server playwright-tests
 
 # Override both
 docker-compose run -e SERVER=custom_server playwright-tests npm run test:e2e
+
+# Pass credentials at runtime (alternative to .env)
+docker-compose run -e AGENT1_PASSWORD=secret1 -e AGENT2_PASSWORD=secret2 playwright-tests
 ```
 
 ### Environment variables
 
-`docker-compose.yaml` reads from `.env` automatically. Copy `.env.example` to `.env` and set `SERVER` and `PASS` before running. `PASS` can also be passed at runtime with `-e PASS=...` — never hardcode a real value in `Dockerfile` or `docker-compose.yaml`.
+`docker-compose.yaml` reads from `.env` automatically. Copy `.env.example` to `.env` and set `SERVER`, `AGENT1_PASSWORD`, and `AGENT2_PASSWORD` before running. Credentials can also be passed at runtime with `-e AGENT1_PASSWORD=...` — never hardcode real values in `Dockerfile` or `docker-compose.yaml`.
 
 ### Why the `node_modules` volume exists
 

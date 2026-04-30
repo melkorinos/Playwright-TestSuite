@@ -25,9 +25,11 @@ COPY . .
 
 # SERVER selects the active environment from config/config.ts.
 # Override at runtime: docker-compose run -e SERVER=your_env playwright-tests
-# PASS is the authentication password — always override via .env or runtime flag, never hardcode a real value here.
+# AGENT1_PASSWORD and AGENT2_PASSWORD are authentication credentials.
+# Always override via .env or runtime flag — never hardcode real values here.
 ENV SERVER=example
-ENV PASS=
+ENV AGENT1_PASSWORD=
+ENV AGENT2_PASSWORD=
 
 # Clean npm cache to reduce final image size
 RUN npm cache clean --force

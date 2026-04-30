@@ -1,10 +1,19 @@
 import { expect, test } from 'fixtures/fixtures';
 
 import { IResponseModel } from 'api/models/someService';
+import { getWorkerSlot } from 'config/configHelper';
 
 // Group related tests for the same endpoint under a describe block.
 // Each test covers a distinct behaviour — GET validation and POST integration.
 test.describe('Some Service', () => {
+    test.beforeAll(() => {
+        // Validate that the worker slot for this parallel worker is correctly resolved.
+        // This confirms the config → workerSlots wiring is intact before any test runs.
+        const slot = getWorkerSlot();
+        expect(slot).toBeDefined();
+        expect(typeof slot.someKey).toBe('string');
+        console.log(`Worker slot resolved: ${JSON.stringify(slot)}`);
+    });
     test('[testID] Get endpoint - validates response and data', async function ({ servicesAgent1 }) {
         let responseData: IResponseModel;
 

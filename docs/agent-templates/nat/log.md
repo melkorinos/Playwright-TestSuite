@@ -5,7 +5,17 @@
 
 ---
 
-## 2026-04-30 — Test suite architecture refactoring (candidates 1 & 2)
+## 2026-04-30 — README full review and update
+
+**Done:**
+- Updated env vars table: `PASS` → `AGENT1_PASSWORD` / `AGENT2_PASSWORD`
+- Updated repo structure: removed `webPages.ts`, `webComponents.ts`, `browserHelper.ts`; added `browserAgents.ts`; fixed config descriptions
+- Rewrote How it works: Config section (`sets` → `workerSlots`, `getConfigSetByParallelIndex` → `getWorkerSlot`); Fixtures section (two-file merge, lazy init); new Browser agents section; new Service agents section; Services section (`instance()` → `create()`)
+- Updated Pipelines: template renamed, `PASS` → agent password secrets, E2E step added to table, `secrets: inherit` documented
+- Updated Docker: removed `PASS` references
+
+---
+
 
 **Done:**
 - Refactored `TokenService` and `SomeService`: removed static singleton `instanceCache`; replaced `instance()` with `create(baseUrl, token?)` factory pattern; `baseUrl` now injected, no ambient config reads inside services

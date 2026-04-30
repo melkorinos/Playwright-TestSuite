@@ -1,4 +1,4 @@
-name: API Tests
+name: Tests
 
 on:
   # Allow manual trigger from the GitHub Actions UI
@@ -23,8 +23,10 @@ jobs:
     uses: ./.github/workflows/api-test-template.yml
     with:
       env: example
+    secrets: inherit
 
   #test-someOtherEnv:
   #  uses: ./.github/workflows/api-test-template.yml
   #  with:
   #    env: someOtherEnv
+  #  secrets: inherit
