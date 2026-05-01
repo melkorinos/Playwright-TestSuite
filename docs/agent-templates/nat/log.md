@@ -5,6 +5,37 @@
 
 ---
 
+## 2026-05-01 — Docs audit + report consolidation + repo hygiene
+
+**Done:**
+- Audited all Nat docs — found and fixed two stale facts in `memory.md`: `webAgents.ts` → `browserAgents.ts`; config `sets[]` → `workerSlots`
+- Removed stale `instanceCache` watch entry (singletons were removed in a prior session)
+- Added `.agents/skills/` note to memory: tool-managed by npx mattpocock/skills, must not be moved
+- Updated memory: reports now all under `temp/`, nat removed from public README agent table
+- Redirected all Playwright outputs to `temp/`: `outputDir` → `temp/test-results`, HTML → `temp/playwright-report`, JUnit → `temp/reports/results.xml`
+- Cleaned `.gitignore`: removed now-redundant `test-results/` and `playwright-report/` entries (covered by `temp/`)
+- Answered: `.vscode` must stay — `settings.json` with `chat.promptFiles: true` is required for slash commands
+- Answered: `.nvmrc` must stay — CI pipeline reads it via `actions/setup-node@v4`
+- ESLint confirmed clean (exit 0) before committing
+
+**Decisions:**
+- Keep `.vscode/settings.json` committed — it's the activation mechanism for agent slash commands, not personal IDE config
+- All report artifacts under `temp/` which is already gitignored — no extra gitignore entries needed
+
+---
+
+## 2026-05-01 — README trim and .env.example fix
+
+**Done:**
+- Removed sections: Environment variables, Test structure rules, Playwright projects, Reports, Resources, Tech debt
+- Shortened: Run (inline code block), Pipelines (prose + removed table), Docker (4-line block replaces full section)
+- Rewrote How it works as 6 numbered steps (step 4 marked E2E-only for browser agents)
+- Updated VS Code extensions to include tech debt convention note
+- Updated AI agents: removed `/nat` from public table, removed Nat private repo instructions, added mattpocock/skills and lackeyjb/playwright-skill links
+- Updated `.env.example`: removed `PASS`, added `SERVER`, `AGENT1_PASSWORD`, `AGENT2_PASSWORD` with inline comments
+
+---
+
 ## 2026-04-30 — README full review and update
 
 **Done:**

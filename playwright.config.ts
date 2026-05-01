@@ -37,9 +37,14 @@ const config: PlaywrightTestConfig = {
 
         { name: 'apiUtils', testDir: 'api/utils/', testMatch: '**/*.utils.ts' },
     ],
+    outputDir: 'temp/test-results',
     reporter: process.env.CI
-        ? [['list'], ['junit', { outputFile: 'reports/results.xml' }], ['html', { open: 'never' }]]
-        : [['list'], ['html']],
+        ? [
+              ['list'],
+              ['junit', { outputFile: 'temp/reports/results.xml' }],
+              ['html', { outputFolder: 'temp/playwright-report', open: 'never' }],
+          ]
+        : [['list'], ['html', { outputFolder: 'temp/playwright-report' }]],
     reportSlowTests: null,
     timeout: 300_000,
     retries: process.env.CI ? 2 : 0,

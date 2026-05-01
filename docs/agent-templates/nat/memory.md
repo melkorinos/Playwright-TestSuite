@@ -31,24 +31,24 @@
 - **Base branch:** `main`
 - **Two test types:** API tests (`api/tests/`) via Playwright request context; E2E tests (`e2e/tests/`) via browser.
 - **Three Playwright projects:** `api`, `e2e`, `apiUtils` (utility runners matching `**/*.utils.ts`).
-- **Fixtures:** `fixtures/fixtures.ts` merges `webAgents` + `services` into the base `test` object. Playwright lazily initialises — API tests never spawn a browser. Custom matchers extend `expect`.
+- **Fixtures:** `fixtures/fixtures.ts` merges `browserAgents` + `services` into the base `test` object. Playwright lazily initialises — API tests never spawn a browser. Custom matchers extend `expect`.
 - **Service fixtures:** worker-scoped `servicesAgent1` / `servicesAgent2` in `fixtures/services.ts`. Each agent: `TokenService.create(baseUrl)` → `getToken(password)` → `SomeService.create(baseUrl, token)`. No singletons. Credentials from `AGENT1_PASSWORD` / `AGENT2_PASSWORD` env vars.
-- **Browser fixtures:** `browserAgent1` (wraps built-in `page`, inherits all project config) and `browserAgent2` (independent browser process via `playwright` fixture) in `fixtures/webAgents.ts`. Each agent delivers `{ webPages, webComponents }` sub-groups.
+- **Browser fixtures:** `browserAgent1` (wraps built-in `page`, inherits all project config) and `browserAgent2` (independent browser process via `playwright` fixture) in `fixtures/browserAgents.ts`. Each agent delivers `{ webPages, webComponents }` sub-groups.
 - **Services:** `create(baseUrl, token?)` factory pattern — no singletons, no ambient config reads inside service classes. `baseUrl` always injected.
-- **Config:** `config/config.ts` holds named environments, each with `sets[]` (for parallel workers) and `url`. `SERVER` env var selects the environment.
-- **Parallel workers:** max workers = number of sets in the active config. `TEST_PARALLEL_INDEX` picks the correct set per worker.
+- **Config:** `config/config.ts` holds named environments, each with `workerSlots[]` and `url`. `SERVER` env var selects the environment.
+- **Parallel workers:** max workers = number of workerSlots in the active config. `TEST_PARALLEL_INDEX` picks the correct slot per worker.
 - **Models:** TypeScript interfaces in `api/models/` — every response body must be typed, no `any`.
 - **Components/Pages:** E2E page objects in `e2e/components/`. Locators belong there, never inline in tests. Organised into `webPages` (full pages with navigation) and `webComponents` (significant sub-components).
 - **Playwright skills library:** `docs/playwright-skills/` — consult for architecture decisions, locator patterns, fixture design, test data, debugging.
-- **AI agents:** three agents in `docs/agent-templates/` — `nat` (personal), `agent-pr-reviewer` (code review), `agent-test-healer` (fix failing tests). Activated via `.github/prompts/`.
+- **AI agents:** `agent-pr-reviewer` and `agent-test-healer` are public agents. `nat` is personal, not listed in README agent table. All activated via `.github/prompts/`.
+- **External skills:** `.agents/skills/` is managed by `npx skills@latest add mattpocock/skills` — do not move or manually edit; npx always writes back to `.agents/skills/`.
 - **Env vars:** `SERVER` (selects config environment), `AGENT1_PASSWORD`, `AGENT2_PASSWORD` (auth credentials per agent). Defined in `.env`.
 - **Scripts:** `npm run test:api` and `npm run test:e2e` — both run with 2 workers.
-- **Reports:** local → HTML; CI → list + JUnit XML + HTML (never opened). Retries: 2 on CI, 0 locally.
+- **Reports:** all outputs go under `temp/` — `temp/test-results` (artifacts), `temp/playwright-report` (HTML), `temp/reports/results.xml` (JUnit CI). `temp/` is gitignored. Retries: 2 on CI, 0 locally.
 
 ---
 
 ## Things to Watch For
 
 - `console.log` still present in `someService.ts` — flagged but not yet removed (boilerplate code).
-- The `instanceCache` on services is static — tests sharing a service instance must not mutate shared state.
 - **API status assertion convention:** always `expect(response.status(), { message: await response.text() }).toBe(<code>)` — explicit status code, response body surfaced on failure. Never `toBeOK()`.
