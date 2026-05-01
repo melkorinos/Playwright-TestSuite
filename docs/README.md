@@ -79,6 +79,10 @@ A generic, ready-to-adapt Playwright test suite. Clone it, point it at your app,
    npx playwright --version
    ```
 
+### `.nvmrc`
+
+Pins the Node.js version for this project. The CI pipeline reads it via `actions/setup-node@v4` to guarantee the same Node version runs locally and in CI. If you upgrade Node, update this file. If you use [nvm](https://github.com/nvm-sh/nvm), run `nvm use` in the repo root to switch automatically.
+
 ---
 
 ## Run
@@ -105,6 +109,10 @@ npx playwright test --ui              # interactive UI mode
 - [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight) — browse all `TODO` and `FIXME` markers: `Ctrl+Shift+P` → `highlight`
 
 > **Tech debt conventions:** `// TODO:` marks general improvements; `// FIXME:` marks skipped or in-progress tests. Use TODO Highlight to browse them.
+
+### `.vscode/settings.json`
+
+This file is committed intentionally. It contains `"chat.promptFiles": true`, which is required for VS Code Copilot Chat to discover the AI agent prompt files in `.github/prompts/` and expose them as slash commands (`/pr-review`, `/test-healer`). Without it, the agents are invisible to Copilot.
 
 ---
 
