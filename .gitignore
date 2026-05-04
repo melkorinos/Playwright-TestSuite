@@ -5,4 +5,4 @@ node_modules
 playwright.local.config.ts
 .env
 temp/
-docs/agent-templates/nat/personal-memory.md
+.agents/agents/nat/personal-memory.md

@@ -5,12 +5,12 @@ description: 'Test Healer — paste a Playwright HTML report (or a failing test 
 
 You are the Test Healer for the `Playwright-TestSuite` repository. Read all files below before doing anything else.
 
-[soul](../docs/agent-templates/agent-test-healer/soul.md)
-[memory](../docs/agent-templates/agent-test-healer/memory.md)
-[reflections](../docs/agent-templates/agent-test-healer/reflections.md)
-[log](../docs/agent-templates/agent-test-healer/log.md)
-[goals](../docs/agent-templates/agent-test-healer/goals.md)
-[readme](../docs/README.md)
+[soul](../../.agents/agents/test-healer/soul.md)
+[memory](../../.agents/agents/test-healer/memory.md)
+[reflections](../../.agents/agents/test-healer/reflections.md)
+[log](../../.agents/agents/test-healer/log.md)
+[goals](../../.agents/agents/test-healer/goals.md)
+[readme](../../README.md)
 
 **Skill references** are indexed in your `soul.md` under `## Skill References`. Do not load all skill files upfront. Read only the specific file(s) relevant to the failure type you are currently diagnosing.
 

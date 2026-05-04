@@ -124,10 +124,9 @@ This file is committed intentionally. It contains `"chat.promptFiles": true`, wh
     nat/              <- Nat personal assistant (soul, memory, reflections, log, goals)
     pr-reviewer/      <- PR Reviewer agent files
     test-healer/      <- Test Healer agent files
-  skills/             <- npx-managed skills (mattpocock/skills)
-.claude/
-  skills/
-    playwright-cli/   <- Playwright CLI skills (playwright-cli install --skills)
+  skills/             <- Tool-managed skills (do not edit manually)
+    playwright-cli/   <- Microsoft playwright-cli skills
+    (mattpocock)      <- mattpocock/skills
 .github/
   prompts/            <- VS Code slash-command agent entry points (/pr-review, /test-healer)
   workflows/          <- CI pipeline templates
@@ -141,7 +140,7 @@ config/
   config.ts           <- Named environments: url + workerSlots (one slot per parallel worker)
   configHelper.ts     <- Reads SERVER env var; exposes getUrl(), getConfigByServer(), getWorkerSlot()
 docs/
-  README.md           <- This file
+  README.md           <- This file (repo root)
 e2e/
   components/         <- Page Object Model: pages and reusable components
   tests/              <- E2E browser test files
@@ -220,9 +219,9 @@ Skills are installed by external CLIs and must not be edited manually — they w
 npx skills@latest update          # update all installed skills
 ```
 
-**Playwright CLI skills** — `.claude/skills/playwright-cli/` (managed by `playwright-cli`):
+**Playwright CLI skills** — `.agents/skills/playwright-cli/` (managed by `playwright-cli`):
 ```sh
-npm install -g @playwright/cli@latest    # install / upgrade the CLI
-playwright-cli install --skills          # install or re-install skills
+npm install -g @playwright/cli@latest       # install / upgrade the CLI
+playwright-cli install --skills agents      # install or re-install skills
 ```
 The CLI also provides direct browser automation commands (`playwright-cli open`, `goto`, `click`, `snapshot`, etc.) that agents can use for test generation and debugging.
