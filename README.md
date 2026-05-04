@@ -33,7 +33,7 @@ A generic, ready-to-adapt Playwright test suite. Clone it, point it at your app,
 | CI pipeline | Example GitHub Actions / Azure DevOps pipeline templates |
 | Docker support | Run tests in a container with a single command |
 | AI agents | PR reviewer, test healer, and personal assistant — activated via VS Code slash commands |
-| Skills library | Playwright best-practice reference docs in `docs/playwright-skills/` |
+| Skills library | Playwright and engineering best-practice skills in `.agents/skills/` |
 
 ---
 
@@ -128,20 +128,6 @@ This file is committed intentionally. It contains `"chat.promptFiles": true`, wh
     playwright-cli/   <- Microsoft playwright-cli skills
     (mattpocock)      <- mattpocock/skills
 .github/
-  prompts/            <- VS Code slash-command agent entry points (/pr-review, /test-healer)
-  workflows/          <- CI pipeline templates
-api/
-  constants/          <- Shared API constants
-  models/             <- TypeScript interfaces for response bodies
-  services/           <- API service clients (async create() factory pattern)
-  tests/              <- API test files
-  utils/              <- Utility runners (matched by apiUtils Playwright project)
-config/
-  config.ts           <- Named environments: url + workerSlots (one slot per parallel worker)
-  configHelper.ts     <- Reads SERVER env var; exposes getUrl(), getConfigByServer(), getWorkerSlot()
-docs/
-  README.md           <- This file (repo root)
-e2e/
   components/         <- Page Object Model: pages and reusable components
   tests/              <- E2E browser test files
 fixtures/

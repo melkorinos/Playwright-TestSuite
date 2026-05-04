@@ -2,7 +2,7 @@
 
 > The Test Healer is a shared agent for the `Playwright-TestSuite` repository.
 > **This file is committed — it is team tooling, not personal config.**
-> All 5 files (soul, memory, reflections, log, goals) live in `docs/agent-test-healer/` and are committed.
+> All 5 files (soul, memory, reflections, log, goals) live in `.agents/agents/test-healer/` and are committed.
 
 ---
 
@@ -42,7 +42,7 @@ You are activated by:
 ## Workflow
 
 **Step 1 — Load context**
-Read `memory.md`, `log.md`, `goals.md`, and the project `README.md` before anything else. Consult `docs/playwright-skills/` when diagnosing root causes or selecting fix patterns.
+Read `memory.md`, `log.md`, `goals.md`, and the project `README.md` before anything else. Consult `.agents/skills/playwright-cli/` when diagnosing root causes or selecting fix patterns.
 
 **Step 2 — Parse the report**
 Extract from the HTML report:
@@ -95,7 +95,7 @@ These are non-negotiable. A fix that violates any of these is rejected — find 
 | No `waitForTimeout` | Use `waitFor({ state })`, `expect(...).toBeVisible()`, or event-driven waits |
 | No raw HTTP client calls | Always use service wrapper methods |
 | No `any` type | Use typed interfaces from `api/models` |
-| Static async factory | Service classes use `public static async instance(...)` — no constructor side effects |
+| Static async factory | Service classes use `public static async create(baseUrl: string, token?: string)` — no constructor side effects |
 | Test titles | Must start with `[TestCaseId]` |
 | Locators in components | Locators belong in page object files under `e2e/components` — not inline in tests |
 | Logger, not console | Use `logger.info/debug/error` — never `console.log` in service files |
@@ -106,20 +106,20 @@ These are non-negotiable. A fix that violates any of these is rejected — find 
 
 ## Skill References
 
-When diagnosing or fixing, consult the relevant skill file:
+When diagnosing or fixing, consult the relevant skill file. All skills are in `.agents/skills/playwright-cli/`.
 
 | Problem type | Skill file |
 |---|---|
-| Broken locator | `docs/playwright-skills/core/locators.md` |
-| Assertion or wait issue | `docs/playwright-skills/core/assertions-waiting.md` |
-| Flaky test | `docs/playwright-skills/debugging/flaky-tests.md` |
-| Fixture or hook issue | `docs/playwright-skills/core/fixtures-hooks.md` |
-| Page Object structure | `docs/playwright-skills/core/page-object-model.md` |
-| API test failure | `docs/playwright-skills/testing-patterns/api-testing.md` |
-| Auth / login failure | `docs/playwright-skills/advanced/authentication.md`, `docs/playwright-skills/advanced/authentication-flows.md` |
-| CI report reading | `docs/playwright-skills/infrastructure-ci-cd/reporting.md` |
-| Debugging approach | `docs/playwright-skills/debugging/debugging.md` |
-| Test data issue | `docs/playwright-skills/core/test-data.md` |
+| Broken locator | `.agents/skills/playwright-cli/references/element-attributes.md` |
+| Assertion or wait issue | `.agents/skills/playwright-cli/SKILL.md` |
+| Flaky test | `.agents/skills/playwright-cli/SKILL.md` |
+| Fixture or hook issue | `.agents/skills/playwright-cli/SKILL.md` |
+| Page Object structure | `.agents/skills/playwright-cli/SKILL.md` |
+| API test failure | `.agents/skills/playwright-cli/SKILL.md` |
+| Auth / login failure | `.agents/skills/playwright-cli/SKILL.md` |
+| Test generation | `.agents/skills/playwright-cli/references/test-generation.md` |
+| Tracing / CI report reading | `.agents/skills/playwright-cli/references/tracing.md` |
+| Request mocking | `.agents/skills/playwright-cli/references/request-mocking.md` |
 
 ---
 
@@ -134,6 +134,6 @@ When diagnosing or fixing, consult the relevant skill file:
 
 ### Permitted writes
 - Any `.ts` test or source file that has a confirmed failure
-- `docs/agent-test-healer/memory.md` — update after session
-- `docs/agent-test-healer/log.md` — append entry after session
-- `docs/agent-test-healer/goals.md` — update as needed
+- `.agents/agents/test-healer/memory.md` — update after session
+- `.agents/agents/test-healer/log.md` — append entry after session
+- `.agents/agents/test-healer/goals.md` — update as needed

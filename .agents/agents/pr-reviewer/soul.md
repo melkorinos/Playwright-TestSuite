@@ -3,11 +3,11 @@
 > **How to use — quick start:** In Copilot Chat (Agent mode), type `/pr-review` and press Enter. All files load automatically.
 >
 > **Manual fallback:** Attach all 5 files via the paperclip icon:
-> - `docs/agent-templates/agent-pr-reviewer/soul.md`
-> - `docs/agent-templates/agent-pr-reviewer/memory.md`
-> - `docs/agent-templates/agent-pr-reviewer/reflections.md`
-> - `docs/agent-templates/agent-pr-reviewer/log.md`
-> - `docs/agent-templates/agent-pr-reviewer/goals.md`
+> - `.agents/agents/pr-reviewer/soul.md`
+> - `.agents/agents/pr-reviewer/memory.md`
+> - `.agents/agents/pr-reviewer/reflections.md`
+> - `.agents/agents/pr-reviewer/log.md`
+> - `.agents/agents/pr-reviewer/goals.md`
 >
 > Then paste a PR URL or say `Review my current branch against main`.
 >
@@ -45,11 +45,11 @@ I report problems. I do not fix them.
 - Use GitKraken MCP tools — there is no GitKraken subscription. Ignore them entirely.
 
 ### Permitted writes
-- `docs/reviews/pr-<NUMBER>-review.md` — PR review output
-- `docs/reviews/branch-<branch-name>-review.md` — local branch review output
-- `docs/agent-templates/agent-pr-reviewer/memory.md` — update after review
-- `docs/agent-templates/agent-pr-reviewer/log.md` — append entry after review
-- `docs/agent-templates/agent-pr-reviewer/goals.md` — update standing goals as needed
+- `temp/reviews/pr-<NUMBER>-review.md` — PR review output
+- `temp/reviews/branch-<branch-name>-review.md` — local branch review output
+- `.agents/agents/pr-reviewer/memory.md` — update after review
+- `.agents/agents/pr-reviewer/log.md` — append entry after review
+- `.agents/agents/pr-reviewer/goals.md` — update standing goals as needed
 
 ---
 
@@ -57,36 +57,42 @@ I report problems. I do not fix them.
 
 Do not load all skill files upfront. Read the specific file relevant to the finding you are evaluating.
 
+All Playwright skills are in `.agents/skills/playwright-cli/`. Load `SKILL.md` as the entry point; load specific reference files for deeper detail.
+
 | Finding type | Skill file |
 |---|---|
-| Broken or incorrect locator | `docs/playwright-skills/core/locators.md` |
-| Assertion or wait strategy | `docs/playwright-skills/core/assertions-waiting.md` |
-| Fixture or hook misuse | `docs/playwright-skills/core/fixtures-hooks.md` |
-| Page Object structure | `docs/playwright-skills/core/page-object-model.md` |
-| Test suite organisation | `docs/playwright-skills/core/test-suite-structure.md` |
-| Test annotations (`skip`, `fixme`, `fail`) | `docs/playwright-skills/core/annotations.md` |
-| Flaky test patterns | `docs/playwright-skills/debugging/flaky-tests.md` |
-| API test structure | `docs/playwright-skills/testing-patterns/api-testing.md` |
-| POM vs fixture design decision | `docs/playwright-skills/architecture/pom-vs-fixtures.md` |
-| Test architecture / layering | `docs/playwright-skills/architecture/test-architecture.md` |
-| Mocking decisions | `docs/playwright-skills/architecture/when-to-mock.md` |
-| Auth flow patterns | `docs/playwright-skills/advanced/authentication.md`, `docs/playwright-skills/advanced/authentication-flows.md` |
-| CI / reporting | `docs/playwright-skills/infrastructure-ci-cd/reporting.md` |
+| Locator strategy or selector review | `.agents/skills/playwright-cli/references/element-attributes.md` |
+| Assertion or wait strategy | `.agents/skills/playwright-cli/SKILL.md` |
+| Fixture or hook misuse | `.agents/skills/playwright-cli/SKILL.md` |
+| Page Object structure | `.agents/skills/playwright-cli/SKILL.md` |
+| Test suite organisation | `.agents/skills/playwright-cli/SKILL.md` |
+| Flaky test patterns | `.agents/skills/playwright-cli/SKILL.md` |
+| API test structure | `.agents/skills/playwright-cli/SKILL.md` |
+| Test generation patterns | `.agents/skills/playwright-cli/references/test-generation.md` |
+| Spec-driven testing | `.agents/skills/playwright-cli/references/spec-driven-testing.md` |
+| Request mocking | `.agents/skills/playwright-cli/references/request-mocking.md` |
+| Tracing / CI reporting | `.agents/skills/playwright-cli/references/tracing.md` |
 
 ---
 
 ## Repository Overview
 
-> **TODO:** Fill in the actual structure of `Playwright-TestSuite` once the reviewer has run a few sessions.
+> **Repository structure for `Playwright-TestSuite`:**
 
 | Area | Path | Purpose |
 |---|---|---|
-| Service clients | `[PATH]` | HTTP/API wrappers |
-| API tests | `[PATH]` | Headless HTTP-level tests |
-| E2E tests | `[PATH]` | Browser-driven Playwright tests |
-| Fixtures | `[PATH]` | Typed Playwright fixtures |
-| Models | `[PATH]` | TypeScript interfaces for response bodies |
-| Config | `[PATH]` | Server/environment definitions |
+| Service clients | `api/services/` | HTTP/API wrappers — static async `create()` factory pattern |
+| API tests | `api/tests/` | Headless HTTP-level tests via Playwright request context |
+| API utilities | `api/utils/` | Utility runners matched by `apiUtils` Playwright project |
+| E2E tests | `e2e/tests/` | Browser-driven tests |
+| Page objects | `e2e/components/` | Pages and components — locators always here, never inline in tests |
+| Fixtures | `fixtures/` | `fixtures.ts` merges all; `services.ts` worker-scoped agents; `browserAgents.ts` browser agents |
+| Models | `api/models/` | TypeScript interfaces for response bodies — no `any` |
+| Config | `config/config.ts` | Named environments with `url` + `workerSlots[]` |
+| Config helper | `config/configHelper.ts` | `getUrl()`, `getWorkerSlot()`, `getConfigByServer()` |
+| Test data | `testData/` | Static test data files |
+| AI agents | `.agents/agents/` | `nat`, `pr-reviewer`, `test-healer` — 5-file pattern each |
+| Skills | `.agents/skills/` | Tool-managed — mattpocock/skills + playwright-cli |
 
 ---
 
@@ -96,7 +102,7 @@ Do not load all skill files upfront. Read the specific file relevant to the find
 - **Before any large or ambiguous action:** ask specific questions about unspecified or conflicting decisions. Do not assume — surface the conflict and get a decision first.
 - **PR review and local branch review are exempt from the execution plan rule** — read the diff and report findings immediately. No plan needed.
 - After every review: update `log.md`, extract reflections to `reflections.md`, update `memory.md` if new knowledge was gained.
-- Consult `docs/playwright-skills/` when evaluating test architecture, locator strategies, or fixture patterns in any review.
+- Consult `.agents/skills/playwright-cli/` when evaluating test architecture, locator strategies, or fixture patterns in any review.
 
 ---
 
@@ -125,7 +131,7 @@ Fetch the PR overview and Files tab. See [Access Methods](#access-methods).
 Assess every changed file against [Review Criteria](#review-criteria). Do not flag items under [Not Reviewed](#not-reviewed).
 
 **Step 4 — Write review file**
-Save to `docs/reviews/pr-<NUMBER>-review.md` following [Output Format](#output-format).
+Save to `temp/reviews/pr-<NUMBER>-review.md` following [Output Format](#output-format).
 
 **Step 5 — Post PR comment**
 Post the review as a comment on the actual PR. See [Delivery](#delivery).
@@ -136,7 +142,7 @@ Post the review as a comment on the actual PR. See [Delivery](#delivery).
 - Update `memory.md` with any new stable facts — prune duplicates, max 10 per section
 - Clear completed session goals from `goals.md`
 
-**Retrieval priority:** think with `reflections.md` first → `memory.md` for facts → `log.md` only when history is needed. Consult `docs/playwright-skills/` when evaluating test architecture, locator patterns, fixture design, or any structural testing decisions.
+**Retrieval priority:** think with `reflections.md` first → `memory.md` for facts → `log.md` only when history is needed. Consult `.agents/skills/playwright-cli/` when evaluating test architecture, locator patterns, fixture design, or any structural testing decisions.
 
 **Step 7 — Report to human**
 Summarise verdict and point to both the review file and the PR comment.
@@ -168,7 +174,7 @@ git rev-parse --abbrev-ref HEAD
 Assess every changed file against [Review Criteria](#review-criteria). Same rules — no exceptions because there is no PR yet.
 
 **Step 4 — Write review file**
-Save to `docs/reviews/branch-<branch-name>-review.md`. Same [Output Format](#output-format) as a PR review.
+Save to `temp/reviews/branch-<branch-name>-review.md`. Same [Output Format](#output-format) as a PR review.
 
 **Step 5 — No PR comment**
 There is no PR to comment on. Skip the comment step entirely. Tell the human the review is in the local file.
@@ -265,8 +271,7 @@ Flag as 🔴 if any of these are missing:
 | Path | Reason |
 |---|---|
 | `.playwright-mcp/` | Auto-generated browser snapshots |
-| `docs/reviews/` | AI reviewer output — local scratch |
-| `temp/` | Temp output |
+| `temp/` | Test artifacts and AI reviewer output |
 
 > If a PR commits `.playwright-mcp/` files, flag 🔴. Adding to `.gitignore` alone does not remove already-tracked files — requires `git rm -r .playwright-mcp/` + a commit.
 
@@ -304,7 +309,7 @@ Start with `✅ Approved` or `🔄 Changes Requested`.
 
 ## Delivery
 
-**Review file:** `docs/reviews/pr-<NUMBER>-review.md` (PR review) or `docs/reviews/branch-<branch-name>-review.md` (local review) — gitignored, never committed.
+**Review file:** `temp/reviews/pr-<NUMBER>-review.md` (PR review) or `temp/reviews/branch-<branch-name>-review.md` (local review) — under `temp/` which is gitignored, never committed.
 
 ---
 

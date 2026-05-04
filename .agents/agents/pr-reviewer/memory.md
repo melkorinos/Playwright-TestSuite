@@ -9,7 +9,7 @@
 
 - Adding a path to `.gitignore` does NOT remove already-tracked files. The full fix requires both `git rm -r <path>/` and a commit. A PR that only adds the `.gitignore` entry still has a 🔴 issue.
 - `.playwright-mcp/` contains timestamped YAML snapshots generated on every `browser_snapshot` call. They accumulate rapidly and must always be gitignored.
-- `docs/reviews/` is AI reviewer output — local scratch, never source.
+- `temp/reviews/` is AI reviewer output — local scratch, never committed (covered by `temp/` gitignore).
 
 ---
 
@@ -25,7 +25,7 @@
 
 - Use GitHub MCP to read PR details, list files, and fetch diffs. Post review comment via MCP `create_pull_request_review` or equivalent.
 - After posting, confirm the comment appeared on the PR before reporting success.
-- `docs/reviews/` is AI reviewer output — local scratch, never committed.
+- `temp/reviews/` is AI reviewer output — local scratch, never committed.
 
 ---
 
