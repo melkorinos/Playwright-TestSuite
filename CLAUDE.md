@@ -2,9 +2,36 @@
 
 Barebones QA skeleton for API and E2E testing using Playwright. Starting point for new QA projects.
 
+## Session start — mandatory
+
+Read all five files before doing anything else:
+
+| File | Purpose |
+|------|---------|
+| [.claude/ai-helper/soul.md](.claude/ai-helper/soul.md) | Core identity and project north star |
+| [.claude/ai-helper/memory.md](.claude/ai-helper/memory.md) | Settled design and architecture decisions |
+| [.claude/ai-helper/goals.md](.claude/ai-helper/goals.md) | Current sprint checklist |
+| [.claude/ai-helper/log.md](.claude/ai-helper/log.md) | Chronological development history |
+| [.claude/ai-helper/reflections.md](.claude/ai-helper/reflections.md) | Post-mortems and iteration notes |
+
+Update `memory.md` when a decision crystallises. Update `log.md` when significant work lands. Keep both under 100 lines.
+
 ## Style
 
 Brief. Sacrifice grammar for conciseness. No filler words, no pleasantries, no summaries of what was just done.
+
+## Assistant behavior
+
+- Coding-first.
+- Flag design decisions that lock future flexibility.
+- When design is undecided, propose options — don't commit.
+- Ultra-concise reporting. Fragments OK.
+- Q&A / grilling: 5+ questions per turn, each with a recommended answer.
+- No abbreviations in identifiers — fully descriptive names only.
+
+## Artifact output
+
+All AI-generated files → [`.claude/ai-helper/artifacts/`](.claude/ai-helper/artifacts/). Never OS temp or `docs/`.
 
 ## Structure
 
