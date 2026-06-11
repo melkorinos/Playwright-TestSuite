@@ -1,0 +1,1 @@
+Read `.agents/skills/write-a-skill/SKILL.md` and follow it. $ARGUMENTS

@@ -1,0 +1,1 @@
+Read `.agents/skills/improve-codebase-architecture/SKILL.md` and follow it. $ARGUMENTS

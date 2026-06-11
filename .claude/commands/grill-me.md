@@ -1,0 +1,1 @@
+Read `.agents/skills/grill-me/SKILL.md` and follow it. $ARGUMENTS

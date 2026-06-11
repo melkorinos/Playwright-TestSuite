@@ -1,0 +1,1 @@
+Read `.agents/skills/setup-matt-pocock-skills/SKILL.md` and follow it. $ARGUMENTS

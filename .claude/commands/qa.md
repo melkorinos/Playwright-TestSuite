@@ -1,0 +1,1 @@
+Read `.agents/skills/qa/SKILL.md` and follow it. $ARGUMENTS

@@ -5,6 +5,14 @@
 
 ---
 
+## 2026-06-11 — Claude Code setup + skeleton bootstrap
+
+**Done:** Added Matt Pocock skills (16) to `.agents/skills/`, tracked in `skills-lock.json`. Created `.claude/commands/` with one file per skill — slash commands now work in Claude Code. Merged ai-helper context into nat (goals, memory updated). Removed `.claude/ai-helper/` and `.github/prompts/` (VS Code Copilot approach replaced by Claude Code). Added `.claude/settings.json` read-only bash allowlist. Artifacts folder at `.agents/agents/nat/artifacts/`.
+
+**Decisions:** Claude Code + `.claude/commands/` replaces VS Code Copilot prompt files. Single AI interface going forward.
+
+---
+
 ## 2026-05-04 — Full agent audit + contradiction fixes
 
 **Done:** Audited all three agent souls + memory files against README. Fixed every contradiction:

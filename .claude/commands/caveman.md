@@ -1,0 +1,1 @@
+Read `.agents/skills/caveman/SKILL.md` and follow it. $ARGUMENTS

@@ -8,11 +8,11 @@ Read all five files before doing anything else:
 
 | File | Purpose |
 |------|---------|
-| [.claude/ai-helper/soul.md](.claude/ai-helper/soul.md) | Core identity and project north star |
-| [.claude/ai-helper/memory.md](.claude/ai-helper/memory.md) | Settled design and architecture decisions |
-| [.claude/ai-helper/goals.md](.claude/ai-helper/goals.md) | Current sprint checklist |
-| [.claude/ai-helper/log.md](.claude/ai-helper/log.md) | Chronological development history |
-| [.claude/ai-helper/reflections.md](.claude/ai-helper/reflections.md) | Post-mortems and iteration notes |
+| [.agents/agents/nat/soul.md](.agents/agents/nat/soul.md) | Core identity and project north star |
+| [.agents/agents/nat/memory.md](.agents/agents/nat/memory.md) | Settled design and architecture decisions |
+| [.agents/agents/nat/goals.md](.agents/agents/nat/goals.md) | Current sprint checklist |
+| [.agents/agents/nat/log.md](.agents/agents/nat/log.md) | Chronological development history |
+| [.agents/agents/nat/reflections.md](.agents/agents/nat/reflections.md) | Post-mortems and iteration notes |
 
 Update `memory.md` when a decision crystallises. Update `log.md` when significant work lands. Keep both under 100 lines.
 
@@ -31,7 +31,7 @@ Brief. Sacrifice grammar for conciseness. No filler words, no pleasantries, no s
 
 ## Artifact output
 
-All AI-generated files → [`.claude/ai-helper/artifacts/`](.claude/ai-helper/artifacts/). Never OS temp or `docs/`.
+All AI-generated files → [`.agents/agents/nat/artifacts/`](.agents/agents/nat/artifacts/). Never OS temp or `docs/`.
 
 ## Structure
 

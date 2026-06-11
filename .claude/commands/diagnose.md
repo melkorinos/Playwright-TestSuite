@@ -1,0 +1,1 @@
+Read `.agents/skills/diagnose/SKILL.md` and follow it. $ARGUMENTS

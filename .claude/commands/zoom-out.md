@@ -1,0 +1,1 @@
+Read `.agents/skills/zoom-out/SKILL.md` and follow it. $ARGUMENTS

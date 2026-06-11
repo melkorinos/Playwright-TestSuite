@@ -1,0 +1,1 @@
+Read `.agents/skills/tdd/SKILL.md` and follow it. $ARGUMENTS

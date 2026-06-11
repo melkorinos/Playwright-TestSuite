@@ -1,0 +1,1 @@
+Read `.agents/skills/handoff/SKILL.md` and follow it. $ARGUMENTS

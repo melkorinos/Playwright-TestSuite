@@ -19,8 +19,8 @@
 
 - Batch all independent edits in one tool call — never sequential.
 - Agent files live in `.agents/agents/[agent-name]/` (5-file pattern per agent).
-- Prompt files live in `.github/prompts/` — this is required for VS Code slash commands to work.
-- `chat.promptFiles: true` must be set in `.vscode/settings.json` for slash commands to activate.
+- Claude Code slash commands via `.claude/commands/` — one `.md` per skill, delegates to `.agents/skills/`.
+- VS Code Copilot prompt files (`.github/prompts/`) removed — Claude Code is the primary AI interface.
 - Personal life context lives in `personal-memory.md` (alongside `memory.md`) — loaded every session. All third-party names anonymised with consistent pseudonyms; sensitive data fully redacted.
 
 ---
@@ -39,7 +39,9 @@
 - **Parallel workers:** max workers = number of workerSlots in the active config. `TEST_PARALLEL_INDEX` picks the correct slot per worker.
 - **Models:** TypeScript interfaces in `api/models/` — every response body must be typed, no `any`.
 - **Components/Pages:** E2E page objects in `e2e/components/`. Locators belong there, never inline in tests. Organised into `webPages` (full pages with navigation) and `webComponents` (significant sub-components).
-- **AI agents:** all agent files live in `.agents/agents/` — `nat` (personal), `pr-reviewer`, `test-healer`. Activated via `.github/prompts/` prompt files.
+- **AI agents:** all agent files live in `.agents/agents/` — `nat` (personal), `pr-reviewer`, `test-healer`. Claude Code commands in `.claude/commands/` activate skills.
+- **AI artifacts:** generated output goes in `.agents/agents/nat/artifacts/` — never OS temp or `docs/`.
+- **Identifiers:** fully descriptive names, no abbreviations (e.g. `responseTimeoutSeconds` not `respTimeout`).
 - **External skills:** Two skill sources, both tool-managed — never edit manually.
   - `.agents/skills/` — mattpocock/skills, managed by `npx skills@latest update`
   - `.agents/skills/playwright-cli/` — Microsoft playwright-cli skills, managed by `playwright-cli install --skills agents`. Update CLI with `npm install -g @playwright/cli@latest`.

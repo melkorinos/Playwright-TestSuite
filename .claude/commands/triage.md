@@ -1,0 +1,1 @@
+Read `.agents/skills/triage/SKILL.md` and follow it. $ARGUMENTS
