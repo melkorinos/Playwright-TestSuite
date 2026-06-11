@@ -47,24 +47,22 @@ export const test = base.extend<BrowserAgentFixtures>({
     },
 
     /**
-     * browserAgent2 launches a fully independent browser process via the `playwright` fixture.
+     * browserAgent2 launches a fully independent browser process.
      * This ensures true isolation — no shared browser state with browserAgent1.
      * Use this in addition to browserAgent1 when a test needs two simultaneous browsers
      * (e.g. agentA performs an action, agentB observes the result in their own session).
      *
-     * Config options that cannot be inherited from playwright.config.ts when launching
-     * manually are applied explicitly below — keep this in sync with the project config.
+     * Uses the `browser` fixture (inherits launch options: channel, headless) and
+     * `contextOptions` (inherits context options: baseURL, viewport, permissions,
+     * ignoreHTTPSErrors, screenshot, video). actionTimeout and navigationTimeout are
+     * not propagated by contextOptions — set them explicitly on the page if required.
      */
-    browserAgent2: async ({ playwright, baseURL }, use) => {
-        const browser = await playwright.chromium.launch({ channel: 'chrome' });
-        const context = await browser.newContext({
-            baseURL: baseURL,
-            ignoreHTTPSErrors: true,
-        });
+    browserAgent2: async ({ browser, contextOptions }, use) => {
+        const context = await browser.newContext(contextOptions);
         const page = await context.newPage();
 
         await use(assembleBrowserAgent(page));
 
-        await browser.close(); // also disposes context and page
+        await context.close(); // also disposes page
     },
 });
