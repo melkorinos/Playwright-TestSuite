@@ -1,12 +1,17 @@
-import { Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
+
 import { BaseComponent } from 'e2e/components/baseComponent';
 
-export class Menu extends BaseComponent {
+type MenuSelectors = {
+    someSelector: Locator;
+};
+
+export class Menu extends BaseComponent<MenuSelectors> {
     constructor(page: Page) {
         super(page);
 
         this.selectors = {
-            someSelector: page.locator('someSelector'),
+            someSelector: page.getByRole('menuitem', { name: 'Some Menu Item' }),
         };
     }
 }

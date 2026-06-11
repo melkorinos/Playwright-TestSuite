@@ -1,5 +1,6 @@
 import { devices, type PlaywrightTestConfig } from '@playwright/test';
 import dotenv from 'dotenv';
+import { getUrl } from 'config/configHelper';
 
 dotenv.config();
 
@@ -8,6 +9,7 @@ const config: PlaywrightTestConfig = {
         {
             name: 'e2e', // for e2e tests in test environments
             use: {
+                baseURL: getUrl(),
                 channel: 'chrome',
                 ...devices['Desktop Chrome'],
                 actionTimeout: 45_000,
@@ -35,9 +37,14 @@ const config: PlaywrightTestConfig = {
 
         { name: 'apiUtils', testDir: 'api/utils/', testMatch: '**/*.utils.ts' },
     ],
+    outputDir: 'temp/test-results',
     reporter: process.env.CI
-        ? [['list'], ['junit', { outputFile: 'reports/results.xml' }], ['html', { open: 'never' }]]
-        : [['list'], ['html']],
+        ? [
+              ['list'],
+              ['junit', { outputFile: 'temp/reports/results.xml' }],
+              ['html', { outputFolder: 'temp/playwright-report', open: 'never' }],
+          ]
+        : [['list'], ['html', { outputFolder: 'temp/playwright-report' }]],
     reportSlowTests: null,
     timeout: 300_000,
     retries: process.env.CI ? 2 : 0,

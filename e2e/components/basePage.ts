@@ -1,16 +1,15 @@
 import { Locator, Page } from '@playwright/test';
 
-export class BasePage {
+export class BasePage<TSelectors extends Record<string, Locator> = Record<string, Locator>> {
     page: Page;
-    selectors: { [key: string]: Locator };
+    selectors: TSelectors;
 
     constructor(page: Page) {
         this.page = page;
-
-        this.selectors = {};
+        this.selectors = {} as TSelectors;
     }
 
-    async goTo(url : string) {
+    async goTo(url: string) {
         await this.page.goto(url);
     }
 }

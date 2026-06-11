@@ -2,7 +2,7 @@
 !.vscode/extensions.json
 .DS_Store
 node_modules
-test-results/
 playwright.local.config.ts
 .env
-playwright-report/
+temp/
+.agents/agents/nat/personal-memory.md
