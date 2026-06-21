@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Playwright-TestSuite — Honest Architecture Review</title>
+<title>Playwright-TestSuite — Scaffold Review (Architecture · Wiring · Docs)</title>
 <style>
   :root{
     --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --line:#30363d;
@@ -15,9 +15,13 @@
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.55;}
   .wrap{max-width:1040px;margin:0 auto;padding:48px 24px 96px;}
-  header h1{font-size:30px;margin:0 0 6px;letter-spacing:-.4px;}
+  header h1{font-size:29px;margin:0 0 6px;letter-spacing:-.4px;}
   header p.sub{color:var(--muted);margin:0 0 4px;font-size:15px;}
   header p.meta{color:var(--muted);font-size:13px;margin:14px 0 0;font-family:var(--mono);}
+  .scope{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 0;}
+  .scope span{font-size:12px;padding:4px 11px;border-radius:20px;border:1px solid var(--line);background:var(--panel);}
+  .scope .in{border-color:var(--good);color:var(--good);}
+  .scope .out{border-color:var(--line);color:var(--muted);text-decoration:line-through;opacity:.7;}
   h2{font-size:21px;margin:52px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line);}
   h3{font-size:16px;margin:26px 0 10px;color:var(--accent);}
   p{margin:10px 0;}
@@ -26,7 +30,8 @@
         padding:14px 18px;border-radius:0 8px 8px 0;margin:18px 0;}
   .grid{display:grid;gap:16px;}
   .cols-2{grid-template-columns:1fr 1fr;}
-  @media(max-width:780px){.cols-2{grid-template-columns:1fr;}}
+  .cols-3{grid-template-columns:repeat(3,1fr);}
+  @media(max-width:780px){.cols-2,.cols-3{grid-template-columns:1fr;}}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;}
   .card.good{border-left:3px solid var(--good);}
   .card h4{margin:0 0 8px;font-size:15px;}
@@ -35,7 +40,6 @@
   .p-bad{background:rgba(248,81,73,.15);color:var(--bad);border:1px solid rgba(248,81,73,.4);}
   .p-warn{background:rgba(210,153,34,.15);color:var(--warn);border:1px solid rgba(210,153,34,.4);}
   .p-good{background:rgba(63,185,80,.15);color:var(--good);border:1px solid rgba(63,185,80,.4);}
-  .p-purple{background:rgba(188,140,255,.15);color:var(--purple);border:1px solid rgba(188,140,255,.4);}
   figure{margin:22px 0;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;overflow-x:auto;}
   figcaption{color:var(--muted);font-size:13px;margin-top:10px;text-align:center;font-style:italic;}
   table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;}
@@ -44,9 +48,7 @@
   td code{font-size:.82em;}
   .id{font-family:var(--mono);font-weight:700;}
   .id.bad{color:var(--bad);} .id.warn{color:var(--warn);}
-  ul{margin:10px 0;padding-left:22px;} li{margin:6px 0;}
   .foot{margin-top:60px;color:var(--muted);font-size:13px;text-align:center;border-top:1px solid var(--line);padding-top:20px;}
-  /* svg helpers */
   svg{display:block;margin:0 auto;max-width:100%;height:auto;font-family:var(--sans);}
   .svg-box{fill:var(--panel2);stroke:var(--line);stroke-width:1.5;}
   .svg-box-good{fill:rgba(63,185,80,.08);stroke:var(--good);stroke-width:1.5;}
@@ -56,7 +58,6 @@
   .svg-t-sm{fill:var(--muted);font-size:11px;}
   .svg-t-b{fill:var(--text);font-size:13px;font-weight:700;}
   .svg-line{stroke:var(--muted);stroke-width:1.5;fill:none;}
-  .svg-line-bad{stroke:var(--bad);stroke-width:1.8;fill:none;stroke-dasharray:5 4;}
   .svg-mono{font-family:var(--mono);}
 </style>
 </head>
@@ -64,82 +65,84 @@
 <div class="wrap">
 
 <header>
-  <h1>Playwright-TestSuite — Honest Architecture Review</h1>
-  <p class="sub">A fork-and-adapt skeleton for API + E2E testing, judged against its own promise: <em>clone it, point it at a new app, write tests fast — with multi-user interaction built in.</em></p>
-  <p class="meta">Scope: setup · architecture · wiring &nbsp;|&nbsp; Verified against source, not assumed.</p>
+  <h1>Playwright-TestSuite — Scaffold Review</h1>
+  <p class="sub">A fork-and-adapt skeleton for API + E2E testing. Reviewed only where it matters for an <em>agnostic, ready-to-implement</em> scaffold: how it's wired, and whether the docs tell the truth.</p>
+  <div class="scope">
+    <span class="in">in scope · architecture &amp; wiring</span>
+    <span class="in">in scope · docs accuracy</span>
+    <span class="out">auth behaviour</span>
+    <span class="out">multi-user interaction</span>
+  </div>
+  <p class="meta">Placeholder domains (auth, services, interaction) are intentional — judged as scaffolding, not as a finished system.</p>
 </header>
 
 <div class="lead">
-  <strong>Bottom line.</strong> Architecturally competent skeleton — but it undersells the one feature
-  it's built around (multi-user interaction), ships auth code that fails <em>silently</em>, and its
-  onboarding doc describes a project that no longer exists. For a "fork it and go" scaffold, the
-  docs-vs-reality drift is the most damaging part.
+  <strong>Bottom line.</strong> The skeleton is wired well — lazy fixtures, clean service
+  factories, worker isolation. Two things undercut its <em>fork-and-go</em> purpose: a couple of
+  <strong>wiring inconsistencies</strong> a newcomer inherits silently, and a <strong>README that
+  describes a repo that no longer exists</strong>. Both are cheap to fix and high-leverage for a
+  scaffold.
 </div>
 
-<!-- ============ SECTION 1: ARCHITECTURE ============ -->
-<h2>1 · How the wiring actually fits together</h2>
+<!-- ============ SECTION 1: ARCHITECTURE & WIRING ============ -->
+<h2>1 · Architecture &amp; wiring</h2>
 <p>
-  Tests import a single <code>test</code> object. <code>fixtures.ts</code> lazily merges two fixture
-  groups; Playwright only instantiates what a test references — so API tests never spawn a browser.
-  That part is clean.
+  Tests import one <code>test</code> object; <code>fixtures/fixtures.ts</code> lazily merges the
+  browser and service fixture groups, so API tests never spawn a browser. That backbone is sound.
+  The issues are at the edges: two browser agents that behave differently, dead fixture files, and a
+  missing quality gate.
 </p>
 
 <figure>
-<svg viewBox="0 0 920 430" role="img" aria-label="Architecture overview">
-  <!-- test entry -->
+<svg viewBox="0 0 920 400" role="img" aria-label="Architecture overview">
   <rect class="svg-box" x="360" y="14" width="200" height="46" rx="8"/>
   <text class="svg-t-b" x="460" y="34" text-anchor="middle">test &amp; expect</text>
   <text class="svg-t-sm" x="460" y="50" text-anchor="middle">fixtures/fixtures.ts</text>
 
-  <!-- mergeTests -->
-  <rect class="svg-box" x="360" y="92" width="200" height="40" rx="8"/>
-  <text class="svg-t" x="460" y="116" text-anchor="middle">mergeTests( ) — lazy</text>
+  <rect class="svg-box-good" x="360" y="92" width="200" height="40" rx="8"/>
+  <text class="svg-t" x="460" y="116" text-anchor="middle">mergeTests( ) — lazy ✓</text>
   <line class="svg-line" x1="460" y1="60" x2="460" y2="92" marker-end="url(#a)"/>
 
-  <!-- two groups -->
-  <line class="svg-line" x1="430" y1="132" x2="220" y2="172" marker-end="url(#a)"/>
-  <line class="svg-line" x1="490" y1="132" x2="700" y2="172" marker-end="url(#a)"/>
+  <line class="svg-line" x1="430" y1="132" x2="220" y2="168" marker-end="url(#a)"/>
+  <line class="svg-line" x1="490" y1="132" x2="700" y2="168" marker-end="url(#a)"/>
 
   <!-- browser group -->
-  <rect class="svg-box-warn" x="40" y="172" width="360" height="230" rx="10"/>
-  <text class="svg-t-b" x="60" y="196">browserAgents.ts  (E2E)</text>
+  <rect class="svg-box-warn" x="40" y="168" width="360" height="208" rx="10"/>
+  <text class="svg-t-b" x="60" y="192">browserAgents.ts  (E2E)</text>
 
-  <rect class="svg-box-good" x="60" y="214" width="150" height="78" rx="8"/>
-  <text class="svg-t-b" x="135" y="236" text-anchor="middle">browserAgent1</text>
-  <text class="svg-t-sm" x="135" y="254" text-anchor="middle">built-in page</text>
-  <text class="svg-t-sm" x="135" y="270" text-anchor="middle">FULL project config</text>
-  <text class="svg-t-sm" x="135" y="284" text-anchor="middle">test-scoped</text>
+  <rect class="svg-box-good" x="60" y="208" width="150" height="86" rx="8"/>
+  <text class="svg-t-b" x="135" y="230" text-anchor="middle">browserAgent1</text>
+  <text class="svg-t-sm" x="135" y="248" text-anchor="middle">built-in page</text>
+  <text class="svg-t-sm" x="135" y="264" text-anchor="middle">action + nav timeouts</text>
+  <text class="svg-t-sm" x="135" y="280" text-anchor="middle">from project config ✓</text>
 
-  <rect class="svg-box-bad" x="230" y="214" width="150" height="78" rx="8"/>
-  <text class="svg-t-b" x="305" y="236" text-anchor="middle">browserAgent2</text>
-  <text class="svg-t-sm" x="305" y="254" text-anchor="middle">newContext( )</text>
-  <text class="svg-t-sm" x="305" y="270" text-anchor="middle">drops timeouts ⚠</text>
-  <text class="svg-t-sm" x="305" y="284" text-anchor="middle">test-scoped</text>
+  <rect class="svg-box-bad" x="230" y="208" width="150" height="86" rx="8"/>
+  <text class="svg-t-b" x="305" y="230" text-anchor="middle">browserAgent2</text>
+  <text class="svg-t-sm" x="305" y="248" text-anchor="middle">newContext( )</text>
+  <text class="svg-t-sm" x="305" y="264" text-anchor="middle" style="fill:var(--bad)">timeouts dropped ⚠</text>
+  <text class="svg-t-sm" x="305" y="280" text-anchor="middle">≠ agent1 behaviour</text>
 
-  <text class="svg-t-sm" x="60" y="322">each → { webPages: loginPage, webComponents: menu }</text>
-  <text class="svg-t-sm" x="60" y="346" style="fill:var(--bad)">A2 · agents are NOT configured identically</text>
-  <text class="svg-t-sm" x="60" y="366" style="fill:var(--bad)">A3 · "independent process" is really an isolated context</text>
-  <text class="svg-t-sm" x="60" y="386" style="fill:var(--warn)">A4 · webPages.ts / webComponents.ts = dead, never merged</text>
+  <text class="svg-t-sm" x="60" y="324" style="fill:var(--warn)">A2 · the two agents are not configured identically</text>
+  <text class="svg-t-sm" x="60" y="344" style="fill:var(--warn)">A4 · webPages.ts / webComponents.ts = dead, never merged</text>
+  <text class="svg-t-sm" x="60" y="364" style="fill:var(--warn)">D3 · no lint / typecheck gate around any of it</text>
 
   <!-- service group -->
-  <rect class="svg-box" x="520" y="172" width="360" height="230" rx="10"/>
-  <text class="svg-t-b" x="540" y="196">services.ts  (API, worker-scoped)</text>
+  <rect class="svg-box-good" x="520" y="168" width="360" height="208" rx="10"/>
+  <text class="svg-t-b" x="540" y="192">services.ts  (API, worker-scoped)</text>
 
-  <rect class="svg-box" x="540" y="214" width="150" height="78" rx="8"/>
-  <text class="svg-t-b" x="615" y="236" text-anchor="middle">servicesAgent1</text>
-  <text class="svg-t-sm" x="615" y="254" text-anchor="middle">tokenService</text>
-  <text class="svg-t-sm" x="615" y="270" text-anchor="middle">someService</text>
-  <text class="svg-t-sm" x="615" y="284" text-anchor="middle">AGENT1_PASSWORD</text>
+  <rect class="svg-box" x="540" y="208" width="150" height="86" rx="8"/>
+  <text class="svg-t-b" x="615" y="230" text-anchor="middle">servicesAgent1</text>
+  <text class="svg-t-sm" x="615" y="250" text-anchor="middle">factory + dispose()</text>
+  <text class="svg-t-sm" x="615" y="266" text-anchor="middle">no singletons</text>
 
-  <rect class="svg-box" x="710" y="214" width="150" height="78" rx="8"/>
-  <text class="svg-t-b" x="785" y="236" text-anchor="middle">servicesAgent2</text>
-  <text class="svg-t-sm" x="785" y="254" text-anchor="middle">tokenService</text>
-  <text class="svg-t-sm" x="785" y="270" text-anchor="middle">someService</text>
-  <text class="svg-t-sm" x="785" y="284" text-anchor="middle">AGENT2_PASSWORD</text>
+  <rect class="svg-box" x="710" y="208" width="150" height="86" rx="8"/>
+  <text class="svg-t-b" x="785" y="230" text-anchor="middle">servicesAgent2</text>
+  <text class="svg-t-sm" x="785" y="250" text-anchor="middle">factory + dispose()</text>
+  <text class="svg-t-sm" x="785" y="266" text-anchor="middle">no singletons</text>
 
-  <text class="svg-t-sm" x="540" y="322">factory + explicit dispose( ), no singletons ✓</text>
-  <text class="svg-t-sm" x="540" y="346" style="fill:var(--warn)">C3 · worker scope + no per-test reset → state bleed</text>
-  <text class="svg-t-sm" x="540" y="366" style="fill:var(--bad)">C1/C2 · auth fails silently (see §3)</text>
+  <text class="svg-t-sm" x="540" y="324" style="fill:var(--good)">symmetric, clean lifecycle ✓</text>
+  <text class="svg-t-sm" x="540" y="344" style="fill:var(--good)">worker-scoped isolation ✓</text>
+  <text class="svg-t-sm" x="540" y="364" style="fill:var(--muted)">(auth payload intentionally a placeholder)</text>
 
   <defs>
     <marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
@@ -147,110 +150,55 @@
     </marker>
   </defs>
 </svg>
-<figcaption>Two fixture groups merged into one lazy <code>test</code>. Green = sound · red/amber = flagged below.</figcaption>
+<figcaption>Backbone is green. The browser side carries the wiring snags; the service side is the model to copy.</figcaption>
 </figure>
 
-<!-- ============ SECTION 2: MULTI-USER ============ -->
-<h2>2 · The headline feature is the weakest link</h2>
+<h3>The asymmetry, up close</h3>
 <p>
-  The selling point is "two users interacting." Yet the dual-agent example just navigates both agents
-  to the <em>same URL independently</em> — there is no <strong>agentA acts → agentB observes</strong>
-  scenario. The differentiator has no real demonstration, and the two agents aren't even symmetric.
+  Both fixtures present the same <code>BrowserAgent</code> type and share the page-object factory
+  <code>assembleBrowserAgent(page)</code>, so a test treats them as interchangeable — but they
+  aren't. <code>browserAgent1</code> rides the built-in <code>page</code> and inherits the full
+  project config; <code>browserAgent2</code> builds its own context, and the code itself admits it
+  doesn't propagate <code>actionTimeout</code>/<code>navigationTimeout</code>
+  (<code>browserAgents.ts:56-58</code>). Same shape, different behaviour = a leaky abstraction
+  someone debugs the hard way later.
 </p>
 
 <figure>
-<svg viewBox="0 0 920 300" role="img" aria-label="Multi-user expectation vs reality">
-  <!-- expected -->
-  <text class="svg-t-b" x="230" y="26" text-anchor="middle" style="fill:var(--good)">What "interaction" should mean</text>
-  <rect class="svg-box-good" x="40" y="44" width="150" height="60" rx="8"/>
-  <text class="svg-t-b" x="115" y="70" text-anchor="middle">Agent A</text>
-  <text class="svg-t-sm" x="115" y="88" text-anchor="middle">posts / mutates</text>
-  <rect class="svg-box-good" x="270" y="44" width="150" height="60" rx="8"/>
-  <text class="svg-t-b" x="345" y="70" text-anchor="middle">Agent B</text>
-  <text class="svg-t-sm" x="345" y="88" text-anchor="middle">observes the change</text>
-  <line class="svg-line" x1="190" y1="74" x2="270" y2="74" marker-end="url(#a2)"/>
-  <text class="svg-t-sm" x="230" y="66" text-anchor="middle" style="fill:var(--good)">shared state</text>
+<svg viewBox="0 0 920 210" role="img" aria-label="Agent fixture asymmetry">
+  <rect class="svg-box-good" x="40" y="30" width="380" height="150" rx="10"/>
+  <text class="svg-t-b" x="60" y="56" style="fill:var(--good)">browserAgent1</text>
+  <text class="svg-t-sm svg-mono" x="60" y="82">async ({ page }, use) =&gt; …</text>
+  <text class="svg-t-sm" x="60" y="106">✓ baseURL, viewport, permissions</text>
+  <text class="svg-t-sm" x="60" y="126">✓ actionTimeout (project config)</text>
+  <text class="svg-t-sm" x="60" y="146">✓ navigationTimeout (project config)</text>
+  <text class="svg-t-sm" x="60" y="166">→ full project config</text>
 
-  <!-- actual -->
-  <text class="svg-t-b" x="230" y="160" text-anchor="middle" style="fill:var(--bad)">What the example actually does</text>
-  <rect class="svg-box-bad" x="40" y="178" width="150" height="60" rx="8"/>
-  <text class="svg-t-b" x="115" y="204" text-anchor="middle">Agent 1</text>
-  <text class="svg-t-sm" x="115" y="222" text-anchor="middle">goto( baseURL )</text>
-  <rect class="svg-box-bad" x="270" y="178" width="150" height="60" rx="8"/>
-  <text class="svg-t-b" x="345" y="204" text-anchor="middle">Agent 2</text>
-  <text class="svg-t-sm" x="345" y="222" text-anchor="middle">goto( baseURL )</text>
-  <text class="svg-t-sm" x="230" y="262" text-anchor="middle" style="fill:var(--bad)">no interaction — two parallel monologues</text>
+  <rect class="svg-box-warn" x="500" y="30" width="380" height="150" rx="10"/>
+  <text class="svg-t-b" x="520" y="56" style="fill:var(--warn)">browserAgent2</text>
+  <text class="svg-t-sm svg-mono" x="520" y="82">browser.newContext(contextOptions)</text>
+  <text class="svg-t-sm" x="520" y="106">✓ baseURL, viewport, permissions</text>
+  <text class="svg-t-sm" x="520" y="126" style="fill:var(--bad)">✗ actionTimeout — NOT propagated</text>
+  <text class="svg-t-sm" x="520" y="146" style="fill:var(--bad)">✗ navigationTimeout — NOT propagated</text>
+  <text class="svg-t-sm" x="520" y="166">→ silent behavioural drift</text>
 
-  <!-- asymmetry callout -->
-  <rect class="svg-box-warn" x="500" y="44" width="380" height="194" rx="10"/>
-  <text class="svg-t-b" x="520" y="70">A2 · the two agents diverge</text>
-  <text class="svg-t-sm svg-mono" x="520" y="98">browserAgent1 = ({ page })</text>
-  <text class="svg-t-sm" x="520" y="116">→ full config: action + navigation timeouts ✓</text>
-  <text class="svg-t-sm svg-mono" x="520" y="146">browserAgent2 = newContext(contextOptions)</text>
-  <text class="svg-t-sm" x="520" y="164" style="fill:var(--bad)">→ timeouts NOT propagated (admitted in code)</text>
-  <text class="svg-t-sm" x="520" y="196">Same abstraction, different behaviour =</text>
-  <text class="svg-t-sm" x="520" y="214" style="fill:var(--warn)">leaky. Build both from one factory.</text>
-
-  <defs>
-    <marker id="a2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
-      <path d="M0,0 L7,3 L0,6 Z" fill="#3fb950"/>
-    </marker>
-  </defs>
+  <text class="svg-t-b" x="460" y="22" text-anchor="middle">same BrowserAgent type — assumed interchangeable</text>
 </svg>
-<figcaption>The promise (top-left) vs. the shipped example (bottom-left); the agents also drift in config (right).</figcaption>
+<figcaption>Fix: propagate the timeouts when building agent2's context so the two agents behave identically.</figcaption>
 </figure>
 
-<!-- ============ SECTION 3: AUTH FAILURE ============ -->
-<h2>3 · The silent auth cascade</h2>
-<p>
-  Auth originates in <code>tokenService.getToken()</code>, which returns <code>response.json()</code>
-  with <strong>no status check</strong>. A failed token call yields garbage → every downstream request
-  carries <code>Bearer undefined</code> → 401s with no traceable cause. Missing credentials are
-  silently coerced to <code>''</code>. Both violate the repo's own explicit-status convention.
-</p>
+<div class="grid cols-3">
+  <div class="card"><h4><span class="pill p-warn">A2</span></h4><p>Agent fixtures behave differently (timeouts not propagated into agent2's <code>newContext</code>). Build the context with the project timeouts so the agents are truly interchangeable.</p></div>
+  <div class="card"><h4><span class="pill p-warn">A4</span></h4><p><code>fixtures/webPages.ts</code> + <code>webComponents.ts</code> define standalone fixtures that are never merged (their shape is re-implemented inline in <code>browserAgents.ts</code>). Dead code → newcomer wires the wrong file. Delete or integrate.</p></div>
+  <div class="card"><h4><span class="pill p-warn">D3</span></h4><p>Configs exist (<code>.prettierrc</code>, <code>eslint.config.mjs</code>) but no <code>lint</code>/<code>format</code>/<code>typecheck</code> scripts, <code>eslint</code>/<code>prettier</code> aren't even in deps, and CI runs tests only. Wire the gate the toolchain implies.</p></div>
+</div>
 
-<figure>
-<svg viewBox="0 0 920 230" role="img" aria-label="Auth failure cascade">
-  <rect class="svg-box-bad" x="20" y="80" width="160" height="64" rx="8"/>
-  <text class="svg-t-b" x="100" y="104" text-anchor="middle">missing / bad</text>
-  <text class="svg-t-sm" x="100" y="122" text-anchor="middle">PASSWORD ?? ''</text>
-  <text class="id bad" x="100" y="60" text-anchor="middle" style="font-size:12px;">C2</text>
-
-  <rect class="svg-box-bad" x="240" y="80" width="160" height="64" rx="8"/>
-  <text class="svg-t-b" x="320" y="100" text-anchor="middle">getToken( )</text>
-  <text class="svg-t-sm" x="320" y="118" text-anchor="middle">no status check</text>
-  <text class="svg-t-sm" x="320" y="134" text-anchor="middle">returns garbage</text>
-  <text class="id bad" x="320" y="60" text-anchor="middle" style="font-size:12px;">C1</text>
-
-  <rect class="svg-box-warn" x="460" y="80" width="160" height="64" rx="8"/>
-  <text class="svg-t-b" x="540" y="104" text-anchor="middle">SomeService</text>
-  <text class="svg-t-sm svg-mono" x="540" y="122" text-anchor="middle">Bearer undefined</text>
-
-  <rect class="svg-box-bad" x="680" y="80" width="200" height="64" rx="8"/>
-  <text class="svg-t-b" x="780" y="100" text-anchor="middle">every call → 401</text>
-  <text class="svg-t-sm" x="780" y="118" text-anchor="middle">no clue why</text>
-  <text class="svg-t-sm" x="780" y="134" text-anchor="middle">hours lost debugging</text>
-
-  <line class="svg-line-bad" x1="180" y1="112" x2="240" y2="112" marker-end="url(#a3)"/>
-  <line class="svg-line-bad" x1="400" y1="112" x2="460" y2="112" marker-end="url(#a3)"/>
-  <line class="svg-line-bad" x1="620" y1="112" x2="680" y2="112" marker-end="url(#a3)"/>
-
-  <text class="svg-t-sm" x="460" y="190" text-anchor="middle" style="fill:var(--good)">Fix: assert status + fail-fast on missing env, surfacing the body — exactly the convention used everywhere else.</text>
-
-  <defs>
-    <marker id="a3" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
-      <path d="M0,0 L7,3 L0,6 Z" fill="#f85149"/>
-    </marker>
-  </defs>
-</svg>
-<figcaption>One unchecked <code>.json()</code> turns a clear "auth failed" into a downstream mystery.</figcaption>
-</figure>
-
-<!-- ============ SECTION 4: DOCS DRIFT ============ -->
-<h2>4 · The front door describes a different house</h2>
+<!-- ============ SECTION 2: DOCS DRIFT ============ -->
+<h2>2 · The front door describes a different house</h2>
 <p>
   For a "clone and go" scaffold the README <em>is</em> the product. This one misdescribes its own
-  structure and mechanism — the single most damaging defect.
+  structure and mechanism — the single most damaging defect for the stated purpose, and the cheapest
+  to fix.
 </p>
 <div class="grid cols-2">
   <div class="card">
@@ -261,100 +209,83 @@
   </div>
   <div class="card">
     <h4><span class="pill p-bad">says</span> CI</h4>
-    <p>"Azure DevOps pipeline templates"</p>
+    <p>"GitHub Actions / Azure DevOps pipeline templates"</p>
     <h4><span class="pill p-good">reality</span></h4>
-    <p>None exist — ADO was removed. GitHub Actions only.</p>
+    <p>No ADO — only <code>.github/workflows/</code> (GitHub Actions).</p>
   </div>
   <div class="card">
     <h4><span class="pill p-bad">says</span> AI agents</h4>
-    <p>VS Code Copilot, <code>.vscode/settings.json</code>, <code>.github/prompts/</code>, <code>/pr-review</code></p>
+    <p>VS Code Copilot · <code>.vscode/settings.json</code> · <code>.github/prompts/</code> · <code>/pr-review</code> · <code>/test-healer</code></p>
     <h4><span class="pill p-good">reality</span></h4>
-    <p>Migrated to Claude Code — <code>.claude/commands/</code> + <code>CLAUDE.md</code>, never mentioned.</p>
+    <p><code>.vscode/</code> and <code>.github/prompts/</code> don't exist; those commands are gone. Interface is now <strong>Claude Code</strong> — <code>.claude/commands/</code> + <code>CLAUDE.md</code> — never mentioned.</p>
   </div>
   <div class="card">
-    <h4><span class="pill p-bad">says</span> browserAgent2</h4>
-    <p>"independent browser process via the <code>playwright</code> fixture"</p>
+    <h4><span class="pill p-bad">says</span> browserAgent2 <span class="pill p-warn" style="margin-left:4px">A3</span></h4>
+    <p>"independent browser <em>process</em> via the <code>playwright</code> fixture"</p>
     <h4><span class="pill p-good">reality</span></h4>
-    <p>Uses <code>browser</code> + <code>contextOptions</code>; it's an isolated context, same process.</p>
+    <p>Uses <code>browser</code> + <code>contextOptions</code>; it's an isolated <em>context</em>, same process. Correct choice — just stop overstating it (also in the <code>browserAgents.ts:50</code> comment).</p>
   </div>
 </div>
 
-<!-- ============ SECTION 5: FINDINGS TABLE ============ -->
-<h2>5 · Findings, by severity</h2>
+<!-- ============ FINDINGS TABLE ============ -->
+<h2>3 · Findings in scope</h2>
 <table>
-  <thead><tr><th>ID</th><th>Finding</th><th>Where</th><th>Impact</th></tr></thead>
+  <thead><tr><th>ID</th><th>Finding</th><th>Where</th><th>Why it matters for a scaffold</th></tr></thead>
   <tbody>
-    <tr><td class="id bad">C1</td><td><code>getToken</code> returns <code>.json()</code> with no status check</td><td><code>tokenService.ts:19</code></td><td>Silent auth failure → unexplained 401s</td></tr>
-    <tr><td class="id bad">C2</td><td>Missing credential coerced to empty string</td><td><code>services.ts:39,48</code></td><td>Cryptic failure instead of "X not set"</td></tr>
-    <tr><td class="id warn">C3</td><td>Worker-scoped services, no per-test reset</td><td><code>services.ts</code></td><td>State bleed in first mutating test</td></tr>
-    <tr><td class="id bad">A1</td><td>Multi-user interaction never demonstrated</td><td><code>someTests.test.ts</code></td><td>Headline feature has no example</td></tr>
-    <tr><td class="id warn">A2</td><td>Agents asymmetric (agent2 drops timeouts)</td><td><code>browserAgents.ts:57</code></td><td>Leaky abstraction; agents not interchangeable</td></tr>
-    <tr><td class="id warn">A3</td><td>"Independent process" is an isolated context</td><td>comment + README</td><td>Overstated isolation guarantee</td></tr>
-    <tr><td class="id warn">A4</td><td>Dead fixtures never merged</td><td><code>fixtures/webPages.ts</code>,<code>webComponents.ts</code></td><td>Newcomer wires the wrong file</td></tr>
-    <tr><td class="id bad">D1</td><td>README stale: structure, ADO, AI agents, fixture name</td><td><code>README.md</code></td><td>Onboarding doc misdescribes the repo</td></tr>
-    <tr><td class="id warn">D2</td><td><code>console.log</code> in shipped services</td><td><code>tokenService.ts:18</code>,<code>someService.ts:28,35</code></td><td>Copied verbatim → noise everywhere</td></tr>
-    <tr><td class="id warn">D3</td><td>No lint / format / typecheck scripts or CI gate</td><td><code>package.json</code></td><td>Toolchain installed but not wired</td></tr>
-    <tr><td class="id warn">D4</td><td>Generic package identity, no <code>engines</code></td><td><code>package.json</code></td><td>First file a forker opens</td></tr>
-    <tr><td class="id warn">D5</td><td>Domain coupling is all manual rename</td><td>services / components / config</td><td>No TODO markers or guided path</td></tr>
+    <tr><td class="id bad">D1</td><td>README stale: structure, ADO, AI-agent flow</td><td><code>README.md:33,130-132,186-197</code></td><td>Onboarding doc describes a repo that no longer exists</td></tr>
+    <tr><td class="id warn">A2</td><td>Browser agents behave differently (timeouts)</td><td><code>browserAgents.ts:56-58</code></td><td>Same type, different behaviour → silent surprises</td></tr>
+    <tr><td class="id warn">A3</td><td>"independent process" / wrong fixture name</td><td><code>browserAgents.ts:50</code> + <code>README:153</code></td><td>Overstates the isolation guarantee</td></tr>
+    <tr><td class="id warn">A4</td><td>Dead fixtures never merged</td><td><code>fixtures/webPages.ts</code>, <code>webComponents.ts</code></td><td>Newcomer wires the wrong file</td></tr>
+    <tr><td class="id warn">D3</td><td>No lint / format / typecheck script or CI gate</td><td><code>package.json</code>, <code>.github/workflows/</code></td><td>Tooling referenced but never enforced</td></tr>
   </tbody>
 </table>
 
 <h3>What's genuinely good — keep it</h3>
-<div class="grid cols-2">
-  <div class="card good"><h4>Lazy fixture merge</h4><p>API tests never spawn a browser. Clean separation.</p></div>
-  <div class="card good"><h4>Factory + dispose()</h4><p>No singletons; API contexts explicitly released.</p></div>
-  <div class="card good"><h4>Worker-slot isolation</h4><p>Range-checked slot per parallel worker.</p></div>
-  <div class="card good"><h4>Status-assertion convention</h4><p>Body surfaced on failure — just not applied to auth.</p></div>
-  <div class="card good"><h4>Pinned Docker image</h4><p>Matches the exact <code>@playwright/test</code> version.</p></div>
+<div class="grid cols-3">
+  <div class="card good"><h4>Lazy fixture merge</h4><p>API tests never spawn a browser.</p></div>
+  <div class="card good"><h4>Factory + dispose()</h4><p>No singletons; service contexts released cleanly.</p></div>
+  <div class="card good"><h4>Worker-scoped isolation</h4><p>Service agents scoped per parallel worker.</p></div>
+  <div class="card good"><h4>Pinned Docker image</h4><p>Matches the exact Playwright version.</p></div>
   <div class="card good"><h4>Reusable CI workflow</h4><p><code>workflow_call</code> template pattern.</p></div>
+  <div class="card good"><h4>Agnostic placeholders</h4><p>Auth / services / domains left open by design.</p></div>
 </div>
 
-<!-- ============ SECTION 6: ROADMAP ============ -->
-<h2>6 · Remediation roadmap</h2>
+<!-- ============ ROADMAP ============ -->
+<h2>4 · Fix order</h2>
 <figure>
-<svg viewBox="0 0 920 250" role="img" aria-label="Remediation order">
-  <line class="svg-line" x1="60" y1="40" x2="860" y2="40"/>
-  <!-- step 1 -->
-  <circle cx="130" cy="40" r="11" class="svg-box-bad"/>
-  <text class="svg-t-b" x="130" y="45" text-anchor="middle" style="fill:var(--bad)">1</text>
-  <rect class="svg-box-bad" x="40" y="64" width="180" height="92" rx="8"/>
-  <text class="svg-t-b" x="130" y="86" text-anchor="middle">Docs truth pass</text>
-  <text class="svg-t-sm" x="130" y="108" text-anchor="middle">D1 · D5</text>
-  <text class="svg-t-sm" x="130" y="126" text-anchor="middle">fix README,</text>
-  <text class="svg-t-sm" x="130" y="142" text-anchor="middle">add getting-started</text>
-  <!-- step 2 -->
-  <circle cx="360" cy="40" r="11" class="svg-box-bad"/>
-  <text class="svg-t-b" x="360" y="45" text-anchor="middle" style="fill:var(--bad)">2</text>
-  <rect class="svg-box-bad" x="270" y="64" width="180" height="92" rx="8"/>
-  <text class="svg-t-b" x="360" y="86" text-anchor="middle">Correctness</text>
-  <text class="svg-t-sm" x="360" y="108" text-anchor="middle">C1 · C2 · C3</text>
-  <text class="svg-t-sm" x="360" y="126" text-anchor="middle">fail-fast auth,</text>
-  <text class="svg-t-sm" x="360" y="142" text-anchor="middle">document scope</text>
-  <!-- step 3 -->
-  <circle cx="590" cy="40" r="11" class="svg-box-warn"/>
-  <text class="svg-t-b" x="590" y="45" text-anchor="middle" style="fill:var(--warn)">3</text>
-  <rect class="svg-box-warn" x="500" y="64" width="180" height="92" rx="8"/>
-  <text class="svg-t-b" x="590" y="86" text-anchor="middle">Multi-user</text>
-  <text class="svg-t-sm" x="590" y="108" text-anchor="middle">A1 · A2 · A3</text>
-  <text class="svg-t-sm" x="590" y="126" text-anchor="middle">symmetric factory,</text>
-  <text class="svg-t-sm" x="590" y="142" text-anchor="middle">real interaction test</text>
-  <!-- step 4 -->
-  <circle cx="820" cy="40" r="11" class="svg-box-warn"/>
-  <text class="svg-t-b" x="820" y="45" text-anchor="middle" style="fill:var(--warn)">4</text>
-  <rect class="svg-box-warn" x="730" y="64" width="160" height="92" rx="8"/>
-  <text class="svg-t-b" x="810" y="86" text-anchor="middle">Hygiene</text>
-  <text class="svg-t-sm" x="810" y="108" text-anchor="middle">A4 · D2 · D3 · D4</text>
-  <text class="svg-t-sm" x="810" y="126" text-anchor="middle">dead code, logs,</text>
-  <text class="svg-t-sm" x="810" y="142" text-anchor="middle">scripts, identity</text>
+<svg viewBox="0 0 920 200" role="img" aria-label="Remediation order">
+  <line class="svg-line" x1="120" y1="44" x2="800" y2="44"/>
 
-  <text class="svg-t-sm" x="460" y="210" text-anchor="middle">Verify: <tspan class="svg-mono">tsc --noEmit</tspan> clean · <tspan class="svg-mono">test:api</tspan> + <tspan class="svg-mono">test:e2e</tspan> green · new interaction test passes · README matches tree.</text>
+  <circle cx="180" cy="44" r="12" class="svg-box-bad"/>
+  <text class="svg-t-b" x="180" y="49" text-anchor="middle" style="fill:var(--bad)">1</text>
+  <rect class="svg-box-bad" x="70" y="70" width="220" height="96" rx="8"/>
+  <text class="svg-t-b" x="180" y="94" text-anchor="middle">Docs truth pass</text>
+  <text class="svg-t-sm" x="180" y="116" text-anchor="middle">D1 · A3</text>
+  <text class="svg-t-sm" x="180" y="136" text-anchor="middle">README structure, ADO,</text>
+  <text class="svg-t-sm" x="180" y="152" text-anchor="middle">AI-agent flow, fixture wording</text>
+
+  <circle cx="460" cy="44" r="12" class="svg-box-warn"/>
+  <text class="svg-t-b" x="460" y="49" text-anchor="middle" style="fill:var(--warn)">2</text>
+  <rect class="svg-box-warn" x="350" y="70" width="220" height="96" rx="8"/>
+  <text class="svg-t-b" x="460" y="94" text-anchor="middle">Wiring fix</text>
+  <text class="svg-t-sm" x="460" y="116" text-anchor="middle">A2 · A4</text>
+  <text class="svg-t-sm" x="460" y="136" text-anchor="middle">propagate agent2 timeouts,</text>
+  <text class="svg-t-sm" x="460" y="152" text-anchor="middle">remove dead fixtures</text>
+
+  <circle cx="740" cy="44" r="12" class="svg-box-warn"/>
+  <text class="svg-t-b" x="740" y="49" text-anchor="middle" style="fill:var(--warn)">3</text>
+  <rect class="svg-box-warn" x="630" y="70" width="220" height="96" rx="8"/>
+  <text class="svg-t-b" x="740" y="94" text-anchor="middle">Quality gate</text>
+  <text class="svg-t-sm" x="740" y="116" text-anchor="middle">D3</text>
+  <text class="svg-t-sm" x="740" y="136" text-anchor="middle">lint / format / typecheck</text>
+  <text class="svg-t-sm" x="740" y="152" text-anchor="middle">scripts + CI step</text>
 </svg>
-<figcaption>Front door first, then correctness, then the differentiator, then polish.</figcaption>
+<figcaption>Front door first, then the wiring a forker inherits, then the gate that keeps it honest.</figcaption>
 </figure>
 
 <p class="foot">
-  Honest review · setup / architecture / wiring · all findings verified against source.<br/>
-  Generated for the Playwright-TestSuite scaffold.
+  Scoped review · architecture / wiring / docs · agnostic-scaffold lens.<br/>
+  Out of scope by design: auth behaviour, multi-user interaction.
 </p>
 
 </div>
